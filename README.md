@@ -24,7 +24,7 @@ Descriptives, independent/paired/one-sample t-tests (incl. Welch, Mann-Whitney, 
 
 1. Download `jmvReport_x.y.z.jmo` from the releases page.
 2. In jamovi: **Modules ▸ jamovi library ▸ Sideload** (⋮ menu) ▸ choose the `.jmo` file.
-3. (Optional, for AI polishing) install Ollama and pull a model: `ollama pull qwen3.5:4b`. Larger models (e.g. `qwen3.5:8b`) write better Turkish but need more RAM. On a CPU-only laptop (≈6 tokens/s) the interpretation takes about 1–1.5 minutes per analysis; the optional full rewrite adds 2–3 minutes. A GPU or a remote Ollama server (type its address into *Ollama server*) is 10–20× faster.
+3. (Optional, for AI polishing) install Ollama and pull a model: `ollama pull qwen3.5:4b`. Larger models (e.g. `qwen3.5:8b`) write better Turkish but need more RAM. On a CPU-only laptop (≈6 tokens/s) the interpretation takes about 1–1.5 minutes per analysis; the optional full rewrite adds 2–3 minutes. A GPU or a remote Ollama server (type its address into *Ollama server*) is 10–20× faster. Smaller models were tested and are not recommended: `gemma3:1b` is 2× faster but invents limitations, `qwen3:1.7b` returns empty text.
 
 ### Usage
 
@@ -64,7 +64,7 @@ Bulut servisi yok, API anahtarı yok; veriniz bilgisayarınızdan çıkmaz.
 
 1. `jmvReport_x.y.z.jmo` dosyasını indirin.
 2. jamovi'de **Modules ▸ jamovi library ▸ Sideload** (⋮ menüsü) ▸ `.jmo` dosyasını seçin.
-3. (İsteğe bağlı) Ollama kurun ve model indirin: `ollama pull qwen3.5:4b`. Daha büyük modeller (ör. `qwen3.5:8b`) daha iyi Türkçe yazar ama daha çok RAM ister. Yalnızca CPU'lu bir dizüstünde (≈6 token/s) yorum analiz başına 1–1,5 dakika sürer; isteğe bağlı tam yeniden yazım 2–3 dakika ekler. GPU'lu bir makine veya ağdaki bir Ollama sunucusu (*Ollama server* kutusuna adresini yazın) 10–20 kat hızlıdır.
+3. (İsteğe bağlı) Ollama kurun ve model indirin: `ollama pull qwen3.5:4b`. Daha büyük modeller (ör. `qwen3.5:8b`) daha iyi Türkçe yazar ama daha çok RAM ister. Yalnızca CPU'lu bir dizüstünde (≈6 token/s) yorum analiz başına 1–1,5 dakika sürer; isteğe bağlı tam yeniden yazım 2–3 dakika ekler. GPU'lu bir makine veya ağdaki bir Ollama sunucusu (*Ollama server* kutusuna adresini yazın) 10–20 kat hızlıdır. Daha küçük modeller denendi, önerilmez: `gemma3:1b` 2 kat hızlı ama uydurma sınırlılıklar yazıyor, `qwen3:1.7b` boş metin döndürüyor.
 
 ### Kullanım
 
