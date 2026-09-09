@@ -45,6 +45,9 @@ children:
     children:
       - type: CheckBox
         name: useLLM
+      - type: CheckBox
+        name: polish
+        enable: (useLLM)
       - type: TextBox
         name: model
         format: string

@@ -1,7 +1,7 @@
 .libPaths(c("/home/fbartuyurdacan/jmvReport/build/R4.5.0-x64-linux", "/app/lib/jamovi/modules/jmv/R", "/app/lib/R/library"))
 suppressMessages(library(jmvReport))
 t0 <- Sys.time()
-r <- jmvReport::aiAnovaOneW(data = iris, deps = "Sepal.Length", group = "Species", welchs = TRUE, kruskal = TRUE, lang = "tr", useLLM = TRUE)
+r <- jmvReport::aiAnovaOneW(data = iris, deps = "Sepal.Length", group = "Species", welchs = TRUE, kruskal = TRUE, lang = "tr", useLLM = TRUE, model = Sys.getenv("JMV_MODEL", "qwen3.5:4b"))
 cat(gsub("</p>", "\n\n", gsub("<[^>]+>", "", r$report$content)), "\n")
 cat("WARN:", gsub("<[^>]+>", " ", r$warnings$content), "\n")
 cat("elapsed:", round(as.numeric(difftime(Sys.time(), t0, units = "secs"))), "s\n")

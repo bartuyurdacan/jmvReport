@@ -11,6 +11,7 @@ if (!isTRUE(r$ok)) { cat("ERROR:", r$error, "\n"); quit(status = 1) }
 cat("=== INFO\n", strip_html(r$info), "\n")
 cat("=== METHOD\n", strip_html(r$method), "\n")
 cat("=== RESULTS\n", strip_html(r$results), "\n")
+if (!is.null(r$interp)) cat("=== INTERPRETATION\n", strip_html(r$interp), "\n")
 cat("=== LIST\n"); print(r$list_df)
 cat("=== WARNINGS\n", paste(r$warnings, collapse = "\n"), "\n")
 cat("=== elapsed", r$elapsed, "\n")

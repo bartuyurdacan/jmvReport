@@ -41,6 +41,12 @@ children:
         name: lang
       - type: CheckBox
         name: useLLM
+      - type: CheckBox
+        name: interp
+        enable: (useLLM)
+      - type: CheckBox
+        name: polish
+        enable: (useLLM)
       - type: TextBox
         name: model
         format: string

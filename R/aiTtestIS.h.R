@@ -19,6 +19,8 @@ aiTtestISOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             eqv = TRUE,
             lang = "tr",
             useLLM = TRUE,
+            interp = TRUE,
+            polish = FALSE,
             model = "qwen3.5:4b",
             endpoint = "http://localhost:11434", ...) {
 
@@ -91,6 +93,14 @@ aiTtestISOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "useLLM",
                 useLLM,
                 default=TRUE)
+            private$..interp <- jmvcore::OptionBool$new(
+                "interp",
+                interp,
+                default=TRUE)
+            private$..polish <- jmvcore::OptionBool$new(
+                "polish",
+                polish,
+                default=FALSE)
             private$..model <- jmvcore::OptionString$new(
                 "model",
                 model,
@@ -113,6 +123,8 @@ aiTtestISOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..eqv)
             self$.addOption(private$..lang)
             self$.addOption(private$..useLLM)
+            self$.addOption(private$..interp)
+            self$.addOption(private$..polish)
             self$.addOption(private$..model)
             self$.addOption(private$..endpoint)
         }),
@@ -130,6 +142,8 @@ aiTtestISOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         eqv = function() private$..eqv$value,
         lang = function() private$..lang$value,
         useLLM = function() private$..useLLM$value,
+        interp = function() private$..interp$value,
+        polish = function() private$..polish$value,
         model = function() private$..model$value,
         endpoint = function() private$..endpoint$value),
     private = list(
@@ -146,6 +160,8 @@ aiTtestISOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..eqv = NA,
         ..lang = NA,
         ..useLLM = NA,
+        ..interp = NA,
+        ..polish = NA,
         ..model = NA,
         ..endpoint = NA)
 )
@@ -421,6 +437,8 @@ aiTtestISResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "lang",
                     "useLLM",
+                    "interp",
+                    "polish",
                     "model",
                     "endpoint")))
             self$add(jmvcore::Html$new(
@@ -431,6 +449,8 @@ aiTtestISResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "lang",
                     "useLLM",
+                    "interp",
+                    "polish",
                     "model",
                     "endpoint")))}))
 
@@ -473,6 +493,8 @@ aiTtestISBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param eqv .
 #' @param lang .
 #' @param useLLM .
+#' @param interp .
+#' @param polish .
 #' @param model .
 #' @param endpoint .
 #' @return A results object containing:
@@ -507,6 +529,8 @@ aiTtestIS <- function(
     eqv = TRUE,
     lang = "tr",
     useLLM = TRUE,
+    interp = TRUE,
+    polish = FALSE,
     model = "qwen3.5:4b",
     endpoint = "http://localhost:11434") {
 
@@ -537,6 +561,8 @@ aiTtestIS <- function(
         eqv = eqv,
         lang = lang,
         useLLM = useLLM,
+        interp = interp,
+        polish = polish,
         model = model,
         endpoint = endpoint)
 

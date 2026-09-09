@@ -13,6 +13,8 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             ci = FALSE,
             lang = "tr",
             useLLM = TRUE,
+            interp = TRUE,
+            polish = FALSE,
             model = "qwen3.5:4b",
             endpoint = "http://localhost:11434", ...) {
 
@@ -57,6 +59,14 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "useLLM",
                 useLLM,
                 default=TRUE)
+            private$..interp <- jmvcore::OptionBool$new(
+                "interp",
+                interp,
+                default=TRUE)
+            private$..polish <- jmvcore::OptionBool$new(
+                "polish",
+                polish,
+                default=FALSE)
             private$..model <- jmvcore::OptionString$new(
                 "model",
                 model,
@@ -73,6 +83,8 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..ci)
             self$.addOption(private$..lang)
             self$.addOption(private$..useLLM)
+            self$.addOption(private$..interp)
+            self$.addOption(private$..polish)
             self$.addOption(private$..model)
             self$.addOption(private$..endpoint)
         }),
@@ -84,6 +96,8 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ci = function() private$..ci$value,
         lang = function() private$..lang$value,
         useLLM = function() private$..useLLM$value,
+        interp = function() private$..interp$value,
+        polish = function() private$..polish$value,
         model = function() private$..model$value,
         endpoint = function() private$..endpoint$value),
     private = list(
@@ -94,6 +108,8 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..ci = NA,
         ..lang = NA,
         ..useLLM = NA,
+        ..interp = NA,
+        ..polish = NA,
         ..model = NA,
         ..endpoint = NA)
 )
@@ -190,6 +206,8 @@ aiCorrResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "lang",
                     "useLLM",
+                    "interp",
+                    "polish",
                     "model",
                     "endpoint")))
             self$add(jmvcore::Html$new(
@@ -200,6 +218,8 @@ aiCorrResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "lang",
                     "useLLM",
+                    "interp",
+                    "polish",
                     "model",
                     "endpoint")))}))
 
@@ -236,6 +256,8 @@ aiCorrBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param ci .
 #' @param lang .
 #' @param useLLM .
+#' @param interp .
+#' @param polish .
 #' @param model .
 #' @param endpoint .
 #' @return A results object containing:
@@ -261,6 +283,8 @@ aiCorr <- function(
     ci = FALSE,
     lang = "tr",
     useLLM = TRUE,
+    interp = TRUE,
+    polish = FALSE,
     model = "qwen3.5:4b",
     endpoint = "http://localhost:11434") {
 
@@ -282,6 +306,8 @@ aiCorr <- function(
         ci = ci,
         lang = lang,
         useLLM = useLLM,
+        interp = interp,
+        polish = polish,
         model = model,
         endpoint = endpoint)
 

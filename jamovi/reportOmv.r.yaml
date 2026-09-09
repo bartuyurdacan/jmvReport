@@ -17,6 +17,7 @@ items:
         - endpoint
         - alpha
         - llmTimeout
+        - polish
 
     - name: method
       title: Method — Statistical Analysis
@@ -31,6 +32,7 @@ items:
         - endpoint
         - alpha
         - llmTimeout
+        - polish
 
     - name: results
       title: Results
@@ -45,6 +47,7 @@ items:
         - endpoint
         - alpha
         - llmTimeout
+        - polish
 
     - name: interp
       title: AI Interpretation
@@ -59,6 +62,7 @@ items:
         - endpoint
         - alpha
         - llmTimeout
+        - polish
 
     - name: list
       title: Analyses in the file

@@ -16,6 +16,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             secTables = FALSE,
             alpha = 0.05,
             useLLM = TRUE,
+            polish = FALSE,
             model = "qwen3.5:4b",
             endpoint = "http://localhost:11434",
             llmTimeout = 600, ...) {
@@ -71,6 +72,10 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "useLLM",
                 useLLM,
                 default=TRUE)
+            private$..polish <- jmvcore::OptionBool$new(
+                "polish",
+                polish,
+                default=FALSE)
             private$..model <- jmvcore::OptionString$new(
                 "model",
                 model,
@@ -96,6 +101,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..secTables)
             self$.addOption(private$..alpha)
             self$.addOption(private$..useLLM)
+            self$.addOption(private$..polish)
             self$.addOption(private$..model)
             self$.addOption(private$..endpoint)
             self$.addOption(private$..llmTimeout)
@@ -111,6 +117,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         secTables = function() private$..secTables$value,
         alpha = function() private$..alpha$value,
         useLLM = function() private$..useLLM$value,
+        polish = function() private$..polish$value,
         model = function() private$..model$value,
         endpoint = function() private$..endpoint$value,
         llmTimeout = function() private$..llmTimeout$value),
@@ -125,6 +132,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..secTables = NA,
         ..alpha = NA,
         ..useLLM = NA,
+        ..polish = NA,
         ..model = NA,
         ..endpoint = NA,
         ..llmTimeout = NA)
@@ -164,7 +172,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "model",
                     "endpoint",
                     "alpha",
-                    "llmTimeout")))
+                    "llmTimeout",
+                    "polish")))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="method",
@@ -178,7 +187,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "model",
                     "endpoint",
                     "alpha",
-                    "llmTimeout")))
+                    "llmTimeout",
+                    "polish")))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="results",
@@ -192,7 +202,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "model",
                     "endpoint",
                     "alpha",
-                    "llmTimeout")))
+                    "llmTimeout",
+                    "polish")))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="interp",
@@ -206,7 +217,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "model",
                     "endpoint",
                     "alpha",
-                    "llmTimeout")))
+                    "llmTimeout",
+                    "polish")))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="list",
@@ -313,6 +325,7 @@ reportOmvBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param secTables .
 #' @param alpha .
 #' @param useLLM .
+#' @param polish .
 #' @param model .
 #' @param endpoint .
 #' @param llmTimeout .
@@ -345,6 +358,7 @@ reportOmv <- function(
     secTables = FALSE,
     alpha = 0.05,
     useLLM = TRUE,
+    polish = FALSE,
     model = "qwen3.5:4b",
     endpoint = "http://localhost:11434",
     llmTimeout = 600) {
@@ -364,6 +378,7 @@ reportOmv <- function(
         secTables = secTables,
         alpha = alpha,
         useLLM = useLLM,
+        polish = polish,
         model = model,
         endpoint = endpoint,
         llmTimeout = llmTimeout)

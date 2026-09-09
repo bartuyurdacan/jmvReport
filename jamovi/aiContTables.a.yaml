@@ -85,6 +85,16 @@ options:
       type: Bool
       default: true
 
+    - name: interp
+      title: AI interpretation of the findings
+      type: Bool
+      default: true
+
+    - name: polish
+      title: Also rewrite the Results wording with AI (slower)
+      type: Bool
+      default: false
+
     - name: model
       title: Ollama model
       type: String

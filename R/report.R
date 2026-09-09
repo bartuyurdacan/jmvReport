@@ -3,7 +3,7 @@
 #' Build the full report from a saved jamovi file
 #' @export
 report_from_omv <- function(file = NULL, lang = "tr", useLLM = TRUE, model = "qwen3.5:4b", endpoint = default_endpoint(),
-                            sections = c("method", "results", "interpret"), alpha = 0.05, checkpoint = NULL, llm_timeout = 600) {
+                            sections = c("method", "results", "interpret"), alpha = 0.05, checkpoint = NULL, llm_timeout = 600, polish = FALSE) {
   t0 <- Sys.time(); L <- i18n(lang); warnings_ <- character()
   rp <- resolve_omv_path(file)
   if (is.na(rp$path)) return(list(ok = FALSE, error = if (!is.null(rp$error)) rp$error else L$no_file))
@@ -44,39 +44,32 @@ report_from_omv <- function(file = NULL, lang = "tr", useLLM = TRUE, model = "qw
   for (i in seq_along(summaries)) results_html <- paste0(results_html, render_results_text(summaries[[i]], lang, index = i))
   supported <- Filter(function(s) isTRUE(s$supported), summaries)
   method_html <- render_method_text(supported, lang, alpha = alpha, jamovi_version = jamovi_version_guess())
-  llm_note <- NULL; llm_used <- FALSE; interp_html <- NULL
-  template_results <- results_html
-  if (isTRUE(useLLM)) {
+  llm_note <- NULL; llm_used <- FALSE; interp_html <- NULL; stats <- NULL
+  if (isTRUE(useLLM) && ("results" %in% sections || "interpret" %in% sections)) {
     av <- ollama_available(endpoint)
     if (!isTRUE(av$ok)) { llm_note <- sprintf(L$llm_unavailable, av$error) }
+    else if (!model_installed(model, av$models)) llm_note <- tx(lang, paste0("Model '", model, "' Ollama'da yüklü değil (yüklü: ", paste(av$models, collapse = ", "), "); şablon metni gösteriliyor."), paste0("Model '", model, "' is not installed in Ollama (installed: ", paste(av$models, collapse = ", "), "); showing template text."))
     else {
-      if (length(av$models) && !(model %in% av$models) && !(paste0(model, ":latest") %in% av$models)) llm_note <- tx(lang, paste0("Model '", model, "' Ollama'da yüklü değil (yüklü: ", paste(av$models, collapse = ", "), "); şablon metni gösteriliyor."), paste0("Model '", model, "' is not installed in Ollama (installed: ", paste(av$models, collapse = ", "), "); showing template text."))
-      else {
+      pieces <- character(); interps <- character()
+      for (i in seq_along(summaries)) {
+        piece <- render_results_text(summaries[[i]], lang, index = i)
+        if (!isTRUE(summaries[[i]]$supported)) { pieces <- c(pieces, piece); next }
         if (is.function(checkpoint)) checkpoint()
-        if ("method" %in% sections) { pm <- llm_polish(method_html, "method", lang, model, endpoint, timeout = llm_timeout); if (pm$used) { method_html <- pm$html; llm_used <- TRUE } else llm_note <- c(llm_note, paste0(tx(lang, "Yöntem: ", "Method: "), sprintf(L$llm_fidelity_fail, pm$note))) }
-        if ("results" %in% sections) {
-          # polish analysis by analysis to keep prompts short for small local models
-          pieces <- character()
-          for (i in seq_along(summaries)) { if (is.function(checkpoint)) checkpoint()
-            piece <- render_results_text(summaries[[i]], lang, index = i)
-            if (!isTRUE(summaries[[i]]$supported)) { pieces <- c(pieces, piece); next }
-            pr <- llm_polish(piece, "results", lang, model, endpoint, timeout = llm_timeout)
-            if (pr$used) { pieces <- c(pieces, pr$html); llm_used <- TRUE } else { pieces <- c(pieces, piece); llm_note <- c(llm_note, paste0(i, ". ", summaries[[i]]$title, ": ", sprintf(L$llm_fidelity_fail, pr$note))) } }
-          results_html <- paste(pieces, collapse = "")
-        }
-        if ("interpret" %in% sections) {
-          if (is.function(checkpoint)) checkpoint()
-          it <- llm_interpret(template_results, lang, model, endpoint, timeout = llm_timeout)
-          if (isTRUE(it$ok)) interp_html <- it$html else llm_note <- c(llm_note, paste0(L$interp_title, ": ", it$note))
-        }
+        r <- llm_report(piece, lang, model, endpoint, interpret = "interpret" %in% sections, polish = polish, timeout = llm_timeout)
+        stats <- stats_add(stats, r$stats)
+        if (r$used) { pieces <- c(pieces, r$html); llm_used <- TRUE } else pieces <- c(pieces, piece)
+        if (!is.null(r$interp)) interps <- c(interps, paste0("<p><b>", i, ". ", html_escape(summaries[[i]]$title), "</b></p>", r$interp))
+        if (!is.null(r$note)) llm_note <- c(llm_note, paste0(i, ". ", summaries[[i]]$title, ": ", sprintf(L$llm_fidelity_fail, r$note)))
       }
+      if ("results" %in% sections) results_html <- paste(pieces, collapse = "")
+      if (length(interps)) interp_html <- paste(interps, collapse = "")
     }
   }
   elapsed <- round(as.numeric(difftime(Sys.time(), t0, units = "secs")), 1)
   list_df <- analysis_list_df(summaries, lang)
-  info <- paste0("<p><b>", L$file_used, ":</b> ", html_escape(rp$path), if (isTRUE(rp$auto)) tx(lang, " (otomatik bulundu)", " (auto-detected)") else "", "<br><b>", L$n_analyses, ":</b> ", length(summaries), "<br>", if (llm_used) sprintf(L$layer_llm, html_escape(model)) else L$layer_template, "<br><b>", L$elapsed, ":</b> ", elapsed, " ", L$sec, "</p>")
+  info <- paste0("<p><b>", L$file_used, ":</b> ", html_escape(rp$path), if (isTRUE(rp$auto)) tx(lang, " (otomatik bulundu)", " (auto-detected)") else "", "<br><b>", L$n_analyses, ":</b> ", length(summaries), "<br>", if (llm_used) sprintf(L$layer_llm, html_escape(model)) else if (!is.null(interp_html)) sprintf(L$layer_interp, html_escape(model)) else L$layer_template, "<br><b>", L$elapsed, ":</b> ", elapsed, " ", L$sec, if (!is.null(stats)) paste0("<br>", stats_line(stats, model, lang)) else "", "</p>")
   list(ok = TRUE, path = rp$path, summaries = summaries, method = method_html, results = results_html, interp = interp_html, info = info, list_df = list_df,
-       warnings = c(warnings_, llm_note), llm_used = llm_used, elapsed = elapsed)
+       warnings = c(warnings_, llm_note), llm_used = llm_used, elapsed = elapsed, stats = stats)
 }
 
 analysis_list_df <- function(summaries, lang) {

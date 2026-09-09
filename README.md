@@ -12,7 +12,7 @@
 | Layer | What it does | Requirements |
 |---|---|---|
 | **0 — Template engine** | Deterministic APA sentences generated in R from the computed statistics. Every number in the report comes from here. | none (works everywhere) |
-| **1 — Local AI polish (optional)** | A local language model served by [Ollama](https://ollama.com) rewrites the template text into more fluent prose. The output is **verified number-by-number** against the template; if any number is added, dropped or changed, the template text is shown instead. | Ollama installed and running (`ollama pull qwen3.5:4b`) |
+| **1 — Local AI interpretation (optional, default on)** | A local language model served by [Ollama](https://ollama.com) writes a short **interpretation paragraph** (significant effects, direction, effect-size magnitude, practical meaning, limitations) from a plain-text digest of the results. One short call per analysis. The paragraph may not contain any number that is not in the computed results. Optionally (slower) it can also rewrite the Results wording; that rewrite is **verified number-by-number** and replaced by the template text if any number changes. | Ollama installed and running (`ollama pull qwen3.5:4b`) |
 
 No cloud service, no API key, no data leaves your computer.
 
@@ -24,7 +24,7 @@ Descriptives, independent/paired/one-sample t-tests (incl. Welch, Mann-Whitney, 
 
 1. Download `jmvReport_x.y.z.jmo` from the releases page.
 2. In jamovi: **Modules ▸ jamovi library ▸ Sideload** (⋮ menu) ▸ choose the `.jmo` file.
-3. (Optional, for AI polishing) install Ollama and pull a model: `ollama pull qwen3.5:4b`. Larger models (e.g. `qwen3.5:8b`) write better Turkish but need more RAM; on a CPU-only laptop expect 1–3 minutes per analysis.
+3. (Optional, for AI polishing) install Ollama and pull a model: `ollama pull qwen3.5:4b`. Larger models (e.g. `qwen3.5:8b`) write better Turkish but need more RAM. On a CPU-only laptop (≈6 tokens/s) the interpretation takes about 1–1.5 minutes per analysis; the optional full rewrite adds 2–3 minutes. A GPU or a remote Ollama server (type its address into *Ollama server*) is 10–20× faster.
 
 ### Usage
 
@@ -56,7 +56,7 @@ Rscript -e 'testthat::test_dir("tests/testthat")'
 | Katman | Ne yapar | Gereksinim |
 |---|---|---|
 | **0 — Şablon motoru** | Hesaplanan istatistiklerden R'da üretilen kesin APA cümleleri. Rapordaki her sayı buradan gelir. | yok (her yerde çalışır) |
-| **1 — Yerel yapay zeka (isteğe bağlı)** | [Ollama](https://ollama.com) ile çalışan yerel bir dil modeli şablon metnini akıcılaştırır. Çıktı şablonla **sayı sayı karşılaştırılır**; bir sayı eklenir, silinir veya değişirse şablon metni gösterilir. | Ollama kurulu ve çalışıyor (`ollama pull qwen3.5:4b`) |
+| **1 — Yerel yapay zeka yorumu (isteğe bağlı, varsayılan açık)** | [Ollama](https://ollama.com) ile çalışan yerel bir dil modeli, sonuçların düz-metin özetinden kısa bir **yorum paragrafı** yazar (anlamlı etkiler, yön, etki büyüklüğü, pratik anlam, sınırlılıklar). Analiz başına tek kısa çağrı. Yorumda hesaplanan sonuçlarda olmayan hiçbir sayı bulunamaz. İsteğe bağlı (daha yavaş) olarak Bulgular metnini de yeniden yazabilir; bu yeniden yazım **sayı sayı doğrulanır**, bir sayı değişirse şablon metni gösterilir. | Ollama kurulu ve çalışıyor (`ollama pull qwen3.5:4b`) |
 
 Bulut servisi yok, API anahtarı yok; veriniz bilgisayarınızdan çıkmaz.
 
@@ -64,7 +64,7 @@ Bulut servisi yok, API anahtarı yok; veriniz bilgisayarınızdan çıkmaz.
 
 1. `jmvReport_x.y.z.jmo` dosyasını indirin.
 2. jamovi'de **Modules ▸ jamovi library ▸ Sideload** (⋮ menüsü) ▸ `.jmo` dosyasını seçin.
-3. (İsteğe bağlı) Ollama kurun ve model indirin: `ollama pull qwen3.5:4b`. Daha büyük modeller (ör. `qwen3.5:8b`) daha iyi Türkçe yazar ama daha çok RAM ister; yalnızca CPU'lu bir dizüstünde analiz başına 1–3 dakika bekleyin.
+3. (İsteğe bağlı) Ollama kurun ve model indirin: `ollama pull qwen3.5:4b`. Daha büyük modeller (ör. `qwen3.5:8b`) daha iyi Türkçe yazar ama daha çok RAM ister. Yalnızca CPU'lu bir dizüstünde (≈6 token/s) yorum analiz başına 1–1,5 dakika sürer; isteğe bağlı tam yeniden yazım 2–3 dakika ekler. GPU'lu bir makine veya ağdaki bir Ollama sunucusu (*Ollama server* kutusuna adresini yazın) 10–20 kat hızlıdır.
 
 ### Kullanım
 

@@ -59,13 +59,13 @@ items:
       title: Report text
       type: Html
       visible: true
-      clearWith: [lang, useLLM, model, endpoint]
+      clearWith: [lang, useLLM, interp, polish, model, endpoint]
 
     - name: warnings
       title: Warnings
       type: Html
       visible: false
-      clearWith: [lang, useLLM, model, endpoint]
+      clearWith: [lang, useLLM, interp, polish, model, endpoint]
 
 refs:
     - jmvReport

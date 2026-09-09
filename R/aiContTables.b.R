@@ -22,7 +22,7 @@ aiContTablesClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Clas
             add("N", t$N, NA, NA)
             nomv <- list(cont = t$cc, phi = t$phi, cra = t$cramer); nomv <- nomv[!vapply(nomv, function(v) is.null(v) || is.na(v), logical(1))]
             if (length(nomv)) self$results$nom$setRow(rowNo = 1, values = nomv)
-            rep <- build_report_html(s, o$lang, o$useLLM, o$model, o$endpoint, checkpoint = function() private$.checkpoint())
+            rep <- build_report_html(s, o$lang, o$useLLM, o$model, o$endpoint, interpret = o$interp, polish = o$polish, checkpoint = function() private$.checkpoint())
             self$results$report$setContent(rep$html)
             set_warnings(self, rep$notes)
         })

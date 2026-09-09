@@ -35,22 +35,8 @@ aiAnovaOneWClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Class
                 }
             }
             self$results$postHoc$setContent(ph_html)
-            L <- i18n(lang)
-            method <- para(paste(vapply(summaries, function(x) method_sentence(x, lang), character(1)), collapse = " "))
-            results <- paste(vapply(summaries, function(x) render_results_text(x, lang), character(1)), collapse = "")
-            notes <- character(); used <- FALSE; interp <- NULL
-            if (isTRUE(o$useLLM)) {
-                av <- ollama_available(o$endpoint)
-                if (!isTRUE(av$ok)) notes <- c(notes, sprintf(L$llm_unavailable, av$error))
-                else {
-                    template_results <- results
-                    private$.checkpoint(); pr <- llm_polish(results, "results", lang, o$model, o$endpoint); if (pr$used) { results <- pr$html; used <- TRUE } else notes <- c(notes, sprintf(L$llm_fidelity_fail, pr$note))
-                    private$.checkpoint(); it <- llm_interpret(template_results, lang, o$model, o$endpoint); if (isTRUE(it$ok)) interp <- it$html else notes <- c(notes, paste0(L$interp_title, ": ", it$note))
-                }
-            }
-            self$results$report$setContent(paste0("<h3>", L$method_title, "</h3>", method, "<h3>", L$results_title, "</h3>", results,
-                if (!is.null(interp)) paste0("<h3>", L$interp_title, "</h3>", interp, "<p style='color:#777;font-size:90%'>", sprintf(L$interp_note, html_escape(o$model)), "</p>") else "",
-                "<p style='color:#777;font-size:90%'>", if (used) sprintf(L$layer_llm, html_escape(o$model)) else L$layer_template, "</p>"))
-            set_warnings(self, notes)
+            rep <- build_report_html(summaries, lang, o$useLLM, o$model, o$endpoint, interpret = o$interp, polish = o$polish, checkpoint = function() private$.checkpoint())
+            self$results$report$setContent(rep$html)
+            set_warnings(self, rep$notes)
         })
 )

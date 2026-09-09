@@ -15,7 +15,7 @@ aiTtestISClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Class(
             fill_table(self$results$desc, table_df(res$desc))
             s <- summarize_results(res)
             s$opts$norm <- o$norm; s$opts$eqv <- o$eqv
-            rep <- build_report_html(s, o$lang, o$useLLM, o$model, o$endpoint, checkpoint = function() private$.checkpoint())
+            rep <- build_report_html(s, o$lang, o$useLLM, o$model, o$endpoint, interpret = o$interp, polish = o$polish, checkpoint = function() private$.checkpoint())
             self$results$report$setContent(rep$html)
             set_warnings(self, rep$notes)
         })

@@ -33,7 +33,7 @@ reportOmvClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Class(
                 file = self$options$file, lang = lang, useLLM = self$options$useLLM,
                 model = self$options$model, endpoint = self$options$endpoint,
                 sections = sections, alpha = self$options$alpha,
-                checkpoint = function() private$.checkpoint(), llm_timeout = self$options$llmTimeout)
+                checkpoint = function() private$.checkpoint(), llm_timeout = self$options$llmTimeout, polish = self$options$polish)
             if (!isTRUE(rep$ok)) {
                 self$results$info$setContent(paste0("<p style='color:#b00'>", html_escape(rep$error), "</p>"))
                 self$results$warnings$setVisible(FALSE)

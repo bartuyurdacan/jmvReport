@@ -1,7 +1,7 @@
 Package: jmvReport
 Type: Package
 Title: AI Report Writer for jamovi (APA Method and Results Text)
-Version: 0.1.0
+Version: 0.1.1
 Authors@R:
     person(given = "Fikret Bartu", family = "Yurdacan", role = c("aut", "cre"),
            email = "fbartuyurdacan@trakya.edu.tr")

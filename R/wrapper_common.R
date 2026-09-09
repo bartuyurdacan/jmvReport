@@ -15,33 +15,32 @@ fill_table <- function(tbl, df) {
   invisible()
 }
 
-#' Build the report HTML (method sentence + results text) with optional LLM polish
-build_report_html <- function(summary, lang, useLLM, model, endpoint, checkpoint = NULL, timeout = 600) {
+#' Build the report HTML (method + results [+ AI interpretation]) with ONE Ollama call
+#' `summaries` may be a single summary or a list of summaries (texts are concatenated).
+build_report_html <- function(summaries, lang, useLLM, model, endpoint, interpret = TRUE, polish = FALSE, checkpoint = NULL, timeout = 600) {
+  if (!is.null(summaries$type)) summaries <- list(summaries)
   L <- i18n(lang)
-  results <- render_results_text(summary, lang)
-  method <- para(method_sentence(summary, lang))
-  notes <- character(); used <- FALSE; interp <- NULL
+  results <- paste(vapply(summaries, function(s) render_results_text(s, lang), character(1)), collapse = "")
+  method <- para(paste(vapply(summaries, function(s) method_sentence(s, lang), character(1)), collapse = " "))
+  notes <- character(); used <- FALSE; interp <- NULL; stats <- NULL
   if (isTRUE(useLLM)) {
     av <- ollama_available(endpoint)
     if (!isTRUE(av$ok)) notes <- c(notes, sprintf(L$llm_unavailable, av$error))
-    else if (length(av$models) && !(model %in% av$models) && !(paste0(model, ":latest") %in% av$models)) notes <- c(notes, tx(lang, paste0("Model '", model, "' Ollama'da yüklü değil (yüklü: ", paste(av$models, collapse = ", "), ")."), paste0("Model '", model, "' is not installed in Ollama (installed: ", paste(av$models, collapse = ", "), ").")))
+    else if (!model_installed(model, av$models)) notes <- c(notes, tx(lang, paste0("Model '", model, "' Ollama'da yüklü değil (yüklü: ", paste(av$models, collapse = ", "), ")."), paste0("Model '", model, "' is not installed in Ollama (installed: ", paste(av$models, collapse = ", "), ").")))
     else {
       if (is.function(checkpoint)) checkpoint()
-      template_results <- results
-      pr <- llm_polish(results, "results", lang, model, endpoint, timeout = timeout)
-      if (pr$used) { results <- pr$html; used <- TRUE } else notes <- c(notes, sprintf(L$llm_fidelity_fail, pr$note))
-      if (is.function(checkpoint)) checkpoint()
-      it <- llm_interpret(template_results, lang, model, endpoint, timeout = timeout)
-      if (isTRUE(it$ok)) interp <- it$html else notes <- c(notes, paste0(L$interp_title, ": ", it$note))
+      r <- llm_report(results, lang, model, endpoint, interpret = interpret, polish = polish, timeout = timeout)
+      stats <- r$stats
+      if (r$used) { results <- r$html; used <- TRUE }
+      if (!is.null(r$interp)) interp <- r$interp
+      if (!is.null(r$note)) notes <- c(notes, sprintf(L$llm_fidelity_fail, r$note))
     }
   }
   html <- paste0("<h3>", L$method_title, "</h3>", method, "<h3>", L$results_title, "</h3>", results,
                  if (!is.null(interp)) paste0("<h3>", L$interp_title, "</h3>", interp, "<p style='color:#777;font-size:90%'>", sprintf(L$interp_note, html_escape(model)), "</p>") else "",
-                 "<p style='color:#777;font-size:90%'>", if (used) sprintf(L$layer_llm, html_escape(model)) else L$layer_template, "</p>")
-  list(html = html, notes = notes, used = used)
+                 "<p style='color:#777;font-size:90%'>", if (used) sprintf(L$layer_llm, html_escape(model)) else if (!is.null(interp)) sprintf(L$layer_interp, html_escape(model)) else L$layer_template, " ", stats_line(stats, model, lang), "</p>")
+  list(html = html, notes = notes, used = used, stats = stats)
 }
-
-report_options_ok <- function(self) list(lang = self$options$lang, useLLM = self$options$useLLM, model = self$options$model, endpoint = self$options$endpoint)
 
 set_warnings <- function(self, notes) {
   notes <- notes[!is.na(notes) & nzchar(notes)]

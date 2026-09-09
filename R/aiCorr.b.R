@@ -14,7 +14,7 @@ aiCorrClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Class(
                 vals <- list(a = p$a, b = p$b, n = p$n, r = p$r, rcil = p$rcil, rciu = p$rciu, rp = p$rp, rho = p$rho, rhop = p$rhop, tau = p$tau, taup = p$taup)
                 vals <- vals[!vapply(vals, function(v) is.null(v) || is.na(v), logical(1))]
                 tbl$addRow(rowKey = i, values = vals) }
-            rep <- build_report_html(s, o$lang, o$useLLM, o$model, o$endpoint, checkpoint = function() private$.checkpoint())
+            rep <- build_report_html(s, o$lang, o$useLLM, o$model, o$endpoint, interpret = o$interp, polish = o$polish, checkpoint = function() private$.checkpoint())
             self$results$report$setContent(rep$html)
             set_warnings(self, rep$notes)
         })
