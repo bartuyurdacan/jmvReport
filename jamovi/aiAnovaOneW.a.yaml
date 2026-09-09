@@ -1,0 +1,94 @@
+---
+name: aiAnovaOneW
+title: One-Way ANOVA + Report
+menuGroup: AI Report
+menuSubgroup: Analyses with Report
+version: '1.0.0'
+jas: '1.2'
+
+description:
+    main: One-way ANOVA (Fisher / Welch) and Kruskal-Wallis with post hoc tests and an APA-style report paragraph.
+
+options:
+    - name: data
+      type: Data
+
+    - name: deps
+      title: Dependent Variables
+      type: Variables
+      suggested: [continuous]
+      permitted: [numeric]
+
+    - name: group
+      title: Grouping Variable
+      type: Variable
+      suggested: [nominal]
+      permitted: [factor]
+
+    - name: fishers
+      title: Fisher's (assume equal variances)
+      type: Bool
+      default: true
+
+    - name: welchs
+      title: Welch's
+      type: Bool
+      default: false
+
+    - name: kruskal
+      title: Kruskal-Wallis (non-parametric)
+      type: Bool
+      default: false
+
+    - name: phMethod
+      title: Post hoc test
+      type: List
+      options:
+        - name: none
+          title: None
+        - name: tukey
+          title: Tukey HSD (equal variances)
+        - name: gamesHowell
+          title: Games-Howell (unequal variances)
+      default: tukey
+
+    - name: desc
+      title: Descriptives
+      type: Bool
+      default: true
+
+    - name: norm
+      title: Normality test (Shapiro-Wilk)
+      type: Bool
+      default: true
+
+    - name: eqv
+      title: Homogeneity test (Levene)
+      type: Bool
+      default: true
+
+    - name: lang
+      title: Report language
+      type: List
+      options:
+        - name: tr
+          title: Türkçe
+        - name: en
+          title: English
+      default: tr
+
+    - name: useLLM
+      title: Polish wording with a local AI model (Ollama)
+      type: Bool
+      default: false
+
+    - name: model
+      title: Ollama model
+      type: String
+      default: "qwen3.5:4b"
+
+    - name: endpoint
+      title: Ollama server
+      type: String
+      default: "http://localhost:11434"
+...

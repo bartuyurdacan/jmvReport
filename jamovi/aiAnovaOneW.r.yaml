@@ -1,0 +1,176 @@
+---
+name: aiAnovaOneW
+title: One-Way ANOVA + Report
+jrs: '1.1'
+
+items:
+    - name: anova
+      title: One-Way ANOVA
+      type: Table
+      rows: (deps)
+      clearWith: [group, fishers, welchs]
+      columns:
+        - name: dep
+          title: ''
+          type: text
+          combineBelow: true
+        - name: test[fisher]
+          title: ''
+          type: text
+          content: Fisher's
+          visible: (fishers)
+        - name: F[fisher]
+          title: F
+          type: number
+          visible: (fishers)
+        - name: df1[fisher]
+          title: df1
+          type: number
+          visible: (fishers)
+        - name: df2[fisher]
+          title: df2
+          type: number
+          visible: (fishers)
+        - name: p[fisher]
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (fishers)
+        - name: test[welch]
+          title: ''
+          type: text
+          content: Welch's
+          visible: (welchs)
+        - name: F[welch]
+          title: F
+          type: number
+          visible: (welchs)
+        - name: df1[welch]
+          title: df1
+          type: number
+          visible: (welchs)
+        - name: df2[welch]
+          title: df2
+          type: number
+          visible: (welchs)
+        - name: p[welch]
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (welchs)
+
+    - name: kw
+      title: Kruskal-Wallis
+      type: Table
+      visible: (kruskal)
+      rows: (deps)
+      clearWith: [group]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: chiSq
+          title: χ²
+          type: number
+        - name: df
+          title: df
+          type: integer
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+        - name: es
+          title: ε²
+          type: number
+
+    - name: desc
+      title: Group Descriptives
+      type: Table
+      visible: (desc)
+      rows: 0
+      clearWith: [group, deps]
+      columns:
+        - name: dep
+          title: ''
+          type: text
+          combineBelow: true
+        - name: group
+          title: Group
+          type: text
+        - name: num
+          title: N
+          type: integer
+        - name: mean
+          title: Mean
+          type: number
+        - name: sd
+          title: SD
+          type: number
+        - name: se
+          title: SE
+          type: number
+
+    - name: norm
+      title: Normality Test (Shapiro-Wilk)
+      type: Table
+      visible: (norm)
+      rows: (deps)
+      clearWith: [group]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: w
+          title: W
+          type: number
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+
+    - name: eqv
+      title: Homogeneity of Variances Test (Levene's)
+      type: Table
+      visible: (eqv)
+      rows: (deps)
+      clearWith: [group]
+      columns:
+        - name: dep
+          title: ''
+          type: text
+        - name: F
+          title: F
+          type: number
+        - name: df1
+          title: df1
+          type: integer
+        - name: df2
+          title: df2
+          type: integer
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+
+    - name: postHoc
+      title: Post Hoc Comparisons
+      type: Html
+      visible: (phMethod:tukey || phMethod:gamesHowell || kruskal)
+      clearWith: [group, deps, phMethod, kruskal]
+
+    - name: report
+      title: Report text
+      type: Html
+      visible: true
+      clearWith: [lang, useLLM, model, endpoint]
+
+    - name: warnings
+      title: Warnings
+      type: Html
+      visible: false
+      clearWith: [lang, useLLM, model, endpoint]
+
+refs:
+    - jmvReport
+    - apa7
+...

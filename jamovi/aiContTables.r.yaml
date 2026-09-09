@@ -1,0 +1,67 @@
+---
+name: aiContTables
+title: Contingency Tables + Report
+jrs: '1.1'
+
+items:
+    - name: freqs
+      title: Contingency Table
+      type: Html
+      clearWith: [rows, cols, pcRow, pcCol, exp]
+
+    - name: tests
+      title: χ² Tests
+      type: Table
+      rows: 0
+      clearWith: [rows, cols, chiSq, chiSqCorr, likeRat, fisher]
+      columns:
+        - name: test
+          title: ''
+          type: text
+        - name: value
+          title: Value
+          type: number
+        - name: df
+          title: df
+          type: integer
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+
+    - name: nom
+      title: Nominal (effect sizes)
+      type: Table
+      rows: 1
+      visible: (phiCra || contCoef)
+      clearWith: [rows, cols]
+      columns:
+        - name: cont
+          title: Contingency coefficient
+          type: number
+          visible: (contCoef)
+        - name: phi
+          title: Phi
+          type: number
+          visible: (phiCra)
+        - name: cra
+          title: Cramér's V
+          type: number
+          visible: (phiCra)
+
+    - name: report
+      title: Report text
+      type: Html
+      visible: true
+      clearWith: [lang, useLLM, model, endpoint]
+
+    - name: warnings
+      title: Warnings
+      type: Html
+      visible: false
+      clearWith: [lang, useLLM, model, endpoint]
+
+refs:
+    - jmvReport
+    - apa7
+...

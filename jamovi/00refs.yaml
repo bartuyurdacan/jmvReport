@@ -1,0 +1,16 @@
+---
+refs:
+    jmvReport:
+        type: software
+        author: Yurdacan, F. B.
+        year: 2026
+        title: 'jmvReport: AI Report Writer for jamovi'
+        publisher: '[jamovi module]'
+        url: https://github.com/bartuyurdacan/jmvReport
+    apa7:
+        type: book
+        author: American Psychological Association
+        year: 2020
+        title: 'Publication manual of the American Psychological Association (7th ed.)'
+        publisher: American Psychological Association
+        doi: 10.1037/0000165-000

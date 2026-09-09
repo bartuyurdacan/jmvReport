@@ -1,0 +1,92 @@
+---
+name: reportOmv
+title: Report Writer (from saved file)
+menuGroup: AI Report
+version: '1.0.0'
+jas: '1.2'
+
+description:
+    main: >
+        Reads every analysis stored in a saved jamovi file (.omv), recomputes the
+        results and writes APA-style Method and Results text. Numbers always come
+        from the computed results. An optional local language model (Ollama) only
+        rewords the text; the output is verified against the computed numbers.
+    R:
+        dontrun: false
+        usage: |
+            reportOmv(file = "", lang = "tr", run = TRUE)
+
+options:
+    - name: run
+      title: Generate report
+      type: Bool
+      default: false
+      description:
+          R: tick to (re)generate the report; keeps jamovi responsive while setting options
+
+    - name: file
+      title: File (.omv) — leave empty to use the most recently saved file
+      type: String
+      default: ''
+      description:
+          R: path to a saved jamovi file; empty means auto-detect the newest .omv in Documents/Desktop/Downloads
+
+    - name: lang
+      title: Language
+      type: List
+      options:
+        - name: tr
+          title: Türkçe
+        - name: en
+          title: English
+      default: tr
+
+    - name: secMethod
+      title: Method (Statistical Analysis)
+      type: Bool
+      default: true
+
+    - name: secResults
+      title: Results
+      type: Bool
+      default: true
+
+    - name: secList
+      title: Analysis list table
+      type: Bool
+      default: true
+
+    - name: secTables
+      title: Recomputed tables (raw)
+      type: Bool
+      default: false
+
+    - name: alpha
+      title: Significance level
+      type: Number
+      min: 0.0001
+      max: 0.5
+      default: 0.05
+
+    - name: useLLM
+      title: Polish wording with a local AI model (Ollama)
+      type: Bool
+      default: true
+
+    - name: model
+      title: Ollama model
+      type: String
+      default: 'qwen3.5:4b'
+
+    - name: endpoint
+      title: Ollama server
+      type: String
+      default: 'http://localhost:11434'
+
+    - name: llmTimeout
+      title: AI time limit per section (seconds)
+      type: Integer
+      min: 30
+      max: 3600
+      default: 600
+...

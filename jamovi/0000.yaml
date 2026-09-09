@@ -1,0 +1,73 @@
+---
+title: AI Report Writer
+name: jmvReport
+version: 0.1.0
+jms: '1.0'
+authors:
+  - Fikret Bartu Yurdacan
+maintainer: Fikret Bartu Yurdacan <fbartuyurdacan@trakya.edu.tr>
+date: '2026-09-09'
+type: R
+description: >-
+  Writes APA-style Method and Results text (Turkish or English) for the analyses
+  you ran in jamovi. Reads all analyses from a saved .omv file or works directly
+  inside wrapper analyses. Numbers always come from the computed results; an
+  optional local language model (Ollama) only polishes the wording.
+analyses:
+  - title: Report Writer (from saved file)
+    name: reportOmv
+    ns: jmvReport
+    menuGroup: AI Report
+    menuTitle: Report Writer (from saved file)
+    menuSubgroup: null
+    description: >
+      Reads every analysis stored in a saved jamovi file (.omv), recomputes the
+      results and writes APA-style Method and Results text. Numbers always come
+      from the computed results. An optional local language model (Ollama) only
+      rewords the text; the output is verified against the computed numbers.
+    category: analyses
+  - title: Independent Samples T-Test + Report
+    name: aiTtestIS
+    ns: jmvReport
+    menuGroup: AI Report
+    menuTitle: Independent Samples T-Test + Report
+    menuSubgroup: Analyses with Report
+    description: >-
+      Independent samples t-test (Student, Welch, Mann-Whitney) with an
+      APA-style report paragraph.
+    category: analyses
+  - title: One-Way ANOVA + Report
+    name: aiAnovaOneW
+    ns: jmvReport
+    menuGroup: AI Report
+    menuTitle: One-Way ANOVA + Report
+    menuSubgroup: Analyses with Report
+    description: >-
+      One-way ANOVA (Fisher / Welch) and Kruskal-Wallis with post hoc tests and
+      an APA-style report paragraph.
+    category: analyses
+  - title: Correlation Matrix + Report
+    name: aiCorr
+    ns: jmvReport
+    menuGroup: AI Report
+    menuTitle: Correlation Matrix + Report
+    menuSubgroup: Analyses with Report
+    description: >-
+      Pearson / Spearman / Kendall correlations with an APA-style report
+      paragraph.
+    category: analyses
+  - title: Contingency Tables + Report
+    name: aiContTables
+    ns: jmvReport
+    menuGroup: AI Report
+    menuTitle: Contingency Tables + Report
+    menuSubgroup: Analyses with Report
+    description: >-
+      Chi-square test of independence (with Fisher's exact test and effect
+      sizes) and an APA-style report paragraph.
+    category: analyses
+datasets: []
+usesNative: false
+minApp: 2.3.0
+
+...

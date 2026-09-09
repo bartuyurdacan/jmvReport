@@ -1,0 +1,73 @@
+---
+name: aiCorr
+title: Correlation Matrix + Report
+jrs: '1.1'
+
+items:
+    - name: pairs
+      title: Correlations (pairwise)
+      type: Table
+      rows: 0
+      clearWith: [vars, pearson, spearman, kendall, ci]
+      columns:
+        - name: a
+          title: Variable 1
+          type: text
+        - name: b
+          title: Variable 2
+          type: text
+        - name: n
+          title: N
+          type: integer
+        - name: r
+          title: Pearson's r
+          type: number
+          visible: (pearson)
+        - name: rcil
+          title: Lower
+          type: number
+          visible: (pearson && ci)
+        - name: rciu
+          title: Upper
+          type: number
+          visible: (pearson && ci)
+        - name: rp
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (pearson)
+        - name: rho
+          title: Spearman's rho
+          type: number
+          visible: (spearman)
+        - name: rhop
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (spearman)
+        - name: tau
+          title: Kendall's tau-b
+          type: number
+          visible: (kendall)
+        - name: taup
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (kendall)
+
+    - name: report
+      title: Report text
+      type: Html
+      visible: true
+      clearWith: [lang, useLLM, model, endpoint]
+
+    - name: warnings
+      title: Warnings
+      type: Html
+      visible: false
+      clearWith: [lang, useLLM, model, endpoint]
+
+refs:
+    - jmvReport
+    - apa7
+...

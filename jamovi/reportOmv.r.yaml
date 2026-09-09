@@ -1,0 +1,106 @@
+---
+name: reportOmv
+title: Report Writer (from saved file)
+jrs: '1.1'
+
+items:
+    - name: info
+      title: Info
+      type: Html
+      visible: true
+      clearWith:
+        - run
+        - file
+        - lang
+        - useLLM
+        - model
+        - endpoint
+        - alpha
+        - llmTimeout
+
+    - name: method
+      title: Method — Statistical Analysis
+      type: Html
+      visible: (secMethod)
+      clearWith:
+        - run
+        - file
+        - lang
+        - useLLM
+        - model
+        - endpoint
+        - alpha
+        - llmTimeout
+
+    - name: results
+      title: Results
+      type: Html
+      visible: (secResults)
+      clearWith:
+        - run
+        - file
+        - lang
+        - useLLM
+        - model
+        - endpoint
+        - alpha
+        - llmTimeout
+
+    - name: list
+      title: Analyses in the file
+      type: Table
+      visible: (secList)
+      rows: 0
+      clearWith:
+        - run
+        - file
+        - lang
+      columns:
+        - name: index
+          title: '#'
+          type: integer
+        - name: analysis
+          title: Analysis
+          type: text
+        - name: type
+          title: jmv function
+          type: text
+        - name: variables
+          title: Variables
+          type: text
+        - name: stat
+          title: Primary statistic
+          type: text
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+        - name: es
+          title: Effect size
+          type: text
+
+    - name: tables
+      title: Recomputed tables
+      type: Html
+      visible: (secTables)
+      clearWith:
+        - run
+        - file
+        - lang
+
+    - name: warnings
+      title: Warnings
+      type: Html
+      visible: true
+      clearWith:
+        - run
+        - file
+        - lang
+        - useLLM
+        - model
+        - endpoint
+
+refs:
+    - jmvReport
+    - apa7
+...

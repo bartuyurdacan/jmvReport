@@ -1,0 +1,97 @@
+---
+name: aiContTables
+title: Contingency Tables + Report
+menuGroup: AI Report
+menuSubgroup: Analyses with Report
+version: '1.0.0'
+jas: '1.2'
+
+description:
+    main: Chi-square test of independence (with Fisher's exact test and effect sizes) and an APA-style report paragraph.
+
+options:
+    - name: data
+      type: Data
+
+    - name: rows
+      title: Rows
+      type: Variable
+      suggested: [nominal, ordinal]
+      permitted: [factor]
+
+    - name: cols
+      title: Columns
+      type: Variable
+      suggested: [nominal, ordinal]
+      permitted: [factor]
+
+    - name: chiSq
+      title: χ² test
+      type: Bool
+      default: true
+
+    - name: chiSqCorr
+      title: χ² continuity correction
+      type: Bool
+      default: false
+
+    - name: likeRat
+      title: Likelihood ratio
+      type: Bool
+      default: false
+
+    - name: fisher
+      title: Fisher's exact test
+      type: Bool
+      default: false
+
+    - name: phiCra
+      title: Phi and Cramér's V
+      type: Bool
+      default: true
+
+    - name: contCoef
+      title: Contingency coefficient
+      type: Bool
+      default: false
+
+    - name: pcRow
+      title: Row percentages
+      type: Bool
+      default: false
+
+    - name: pcCol
+      title: Column percentages
+      type: Bool
+      default: false
+
+    - name: exp
+      title: Expected counts
+      type: Bool
+      default: false
+
+    - name: lang
+      title: Report language
+      type: List
+      options:
+        - name: tr
+          title: Türkçe
+        - name: en
+          title: English
+      default: tr
+
+    - name: useLLM
+      title: Polish wording with a local AI model (Ollama)
+      type: Bool
+      default: false
+
+    - name: model
+      title: Ollama model
+      type: String
+      default: "qwen3.5:4b"
+
+    - name: endpoint
+      title: Ollama server
+      type: String
+      default: "http://localhost:11434"
+...

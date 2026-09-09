@@ -1,0 +1,99 @@
+---
+name: aiTtestIS
+title: Independent Samples T-Test + Report
+menuGroup: AI Report
+menuSubgroup: Analyses with Report
+version: '1.0.0'
+jas: '1.2'
+
+description:
+    main: Independent samples t-test (Student, Welch, Mann-Whitney) with an APA-style report paragraph.
+
+options:
+    - name: data
+      type: Data
+
+    - name: vars
+      title: Dependent Variables
+      type: Variables
+      suggested: [continuous]
+      permitted: [numeric]
+
+    - name: group
+      title: Grouping Variable
+      type: Variable
+      suggested: [nominal]
+      permitted: [factor]
+
+    - name: students
+      title: Student's
+      type: Bool
+      default: true
+
+    - name: welchs
+      title: Welch's
+      type: Bool
+      default: false
+
+    - name: mann
+      title: Mann-Whitney U
+      type: Bool
+      default: false
+
+    - name: effectSize
+      title: Effect size
+      type: Bool
+      default: true
+
+    - name: ci
+      title: Confidence interval (mean difference)
+      type: Bool
+      default: false
+
+    - name: ciWidth
+      title: Confidence level
+      type: Number
+      min: 50
+      max: 99.9
+      default: 95
+
+    - name: desc
+      title: Descriptives
+      type: Bool
+      default: true
+
+    - name: norm
+      title: Normality test (Shapiro-Wilk)
+      type: Bool
+      default: true
+
+    - name: eqv
+      title: Homogeneity test (Levene)
+      type: Bool
+      default: true
+
+    - name: lang
+      title: Report language
+      type: List
+      options:
+        - name: tr
+          title: Türkçe
+        - name: en
+          title: English
+      default: tr
+
+    - name: useLLM
+      title: Polish wording with a local AI model (Ollama)
+      type: Bool
+      default: false
+
+    - name: model
+      title: Ollama model
+      type: String
+      default: "qwen3.5:4b"
+
+    - name: endpoint
+      title: Ollama server
+      type: String
+      default: "http://localhost:11434"
+...

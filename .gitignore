@@ -1,0 +1,8 @@
+build/
+*.jmo
+*.tar.gz
+tests/out/
+.Rproj.user/
+.Rhistory
+jamovi.yaml
+jamovi-full.yaml

@@ -1,0 +1,213 @@
+---
+name: aiTtestIS
+title: Independent Samples T-Test + Report
+jrs: '1.1'
+
+items:
+    - name: ttest
+      title: Independent Samples T-Test
+      type: Table
+      rows: (vars)
+      clearWith: [group, students, welchs, mann, effectSize, ci, ciWidth]
+      columns:
+        - name: var[stud]
+          title: ''
+          type: text
+          combineBelow: true
+          visible: (students)
+        - name: name[stud]
+          title: ''
+          type: text
+          content: Student's t
+          visible: (students)
+        - name: stat[stud]
+          title: Statistic
+          type: number
+          visible: (students)
+        - name: df[stud]
+          title: df
+          type: number
+          visible: (students)
+        - name: p[stud]
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (students)
+        - name: md[stud]
+          title: Mean difference
+          type: number
+          visible: (students)
+        - name: cil[stud]
+          title: Lower
+          type: number
+          visible: (students && ci)
+        - name: ciu[stud]
+          title: Upper
+          type: number
+          visible: (students && ci)
+        - name: es[stud]
+          title: Cohen's d
+          type: number
+          visible: (students && effectSize)
+        - name: var[welc]
+          title: ''
+          type: text
+          combineBelow: true
+          visible: (welchs)
+        - name: name[welc]
+          title: ''
+          type: text
+          content: Welch's t
+          visible: (welchs)
+        - name: stat[welc]
+          title: Statistic
+          type: number
+          visible: (welchs)
+        - name: df[welc]
+          title: df
+          type: number
+          visible: (welchs)
+        - name: p[welc]
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (welchs)
+        - name: md[welc]
+          title: Mean difference
+          type: number
+          visible: (welchs)
+        - name: cil[welc]
+          title: Lower
+          type: number
+          visible: (welchs && ci)
+        - name: ciu[welc]
+          title: Upper
+          type: number
+          visible: (welchs && ci)
+        - name: es[welc]
+          title: Cohen's d
+          type: number
+          visible: (welchs && effectSize)
+        - name: var[mann]
+          title: ''
+          type: text
+          combineBelow: true
+          visible: (mann)
+        - name: name[mann]
+          title: ''
+          type: text
+          content: Mann-Whitney U
+          visible: (mann)
+        - name: stat[mann]
+          title: Statistic
+          type: number
+          visible: (mann)
+        - name: p[mann]
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (mann)
+        - name: es[mann]
+          title: Rank-biserial r
+          type: number
+          visible: (mann && effectSize)
+
+    - name: norm
+      title: Normality Test (Shapiro-Wilk)
+      type: Table
+      visible: (norm)
+      rows: (vars)
+      clearWith: [group]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: w
+          title: W
+          type: number
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+
+    - name: eqv
+      title: Homogeneity of Variances Test (Levene's)
+      type: Table
+      visible: (eqv)
+      rows: (vars)
+      clearWith: [group]
+      columns:
+        - name: name
+          title: ''
+          type: text
+        - name: f
+          title: F
+          type: number
+        - name: df
+          title: df
+          type: integer
+        - name: df2
+          title: df2
+          type: integer
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+
+    - name: desc
+      title: Group Descriptives
+      type: Table
+      visible: (desc)
+      rows: (vars)
+      clearWith: [group]
+      columns:
+        - name: dep
+          title: ''
+          type: text
+        - name: group[1]
+          title: Group
+          type: text
+        - name: num[1]
+          title: N
+          type: integer
+        - name: mean[1]
+          title: Mean
+          type: number
+        - name: med[1]
+          title: Median
+          type: number
+        - name: sd[1]
+          title: SD
+          type: number
+        - name: group[2]
+          title: Group
+          type: text
+        - name: num[2]
+          title: N
+          type: integer
+        - name: mean[2]
+          title: Mean
+          type: number
+        - name: med[2]
+          title: Median
+          type: number
+        - name: sd[2]
+          title: SD
+          type: number
+
+    - name: report
+      title: Report text
+      type: Html
+      visible: true
+      clearWith: [lang, useLLM, model, endpoint]
+
+    - name: warnings
+      title: Warnings
+      type: Html
+      visible: false
+      clearWith: [lang, useLLM, model, endpoint]
+
+refs:
+    - jmvReport
+    - apa7
+...

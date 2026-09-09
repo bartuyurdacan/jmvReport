@@ -1,0 +1,2 @@
+.libPaths(c("/home/fbartuyurdacan/jmvReport/build/R4.5.0-x64-linux", "/app/lib/jamovi/modules/jmv/R", "/app/lib/R/library")); suppressMessages(library(jmvReport))
+cat("\n=== reportOmv (installed)\n"); r <- jmvReport::reportOmv(file = "/app/lib/R/library/jmvReadWrite/extdata/ToothGrowth.omv", run = TRUE, useLLM = FALSE, lang = "en", secTables = TRUE); cat(gsub("<[^>]+>", "", r$info$content), "\n"); cat(gsub("<[^>]+>", "", r$method$content), "\n"); print(r$list)

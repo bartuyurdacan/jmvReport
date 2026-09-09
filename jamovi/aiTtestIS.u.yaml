@@ -1,0 +1,77 @@
+title: Independent Samples T-Test + Report
+name: aiTtestIS
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+      - type: TargetLayoutBox
+        label: Dependent Variables
+        children:
+          - type: VariablesListBox
+            name: vars
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Grouping Variable
+        children:
+          - type: VariablesListBox
+            name: group
+            maxItemCount: 1
+            isTarget: true
+  - type: LayoutBox
+    margin: large
+    style: inline
+    children:
+      - type: Label
+        label: Tests
+        children:
+          - type: CheckBox
+            name: students
+          - type: CheckBox
+            name: welchs
+          - type: CheckBox
+            name: mann
+      - type: Label
+        label: Additional
+        children:
+          - type: CheckBox
+            name: effectSize
+          - type: CheckBox
+            name: ci
+            children:
+              - type: TextBox
+                name: ciWidth
+                format: number
+                enable: (ci)
+          - type: CheckBox
+            name: desc
+      - type: Label
+        label: Assumption checks
+        children:
+          - type: CheckBox
+            name: norm
+          - type: CheckBox
+            name: eqv
+  - type: CollapseBox
+    label: Report
+    collapsed: false
+    margin: large
+    children:
+      - type: ComboBox
+        name: lang
+      - type: CheckBox
+        name: useLLM
+      - type: TextBox
+        name: model
+        format: string
+        width: large
+        enable: (useLLM)
+      - type: TextBox
+        name: endpoint
+        format: string
+        width: largest
+        enable: (useLLM)
+

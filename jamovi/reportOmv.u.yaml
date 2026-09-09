@@ -1,0 +1,59 @@
+title: Report Writer (from saved file)
+name: reportOmv
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: Label
+        label: "1) Run your analyses in jamovi and SAVE the file (.omv).  2) Set options below.  3) Tick 'Generate report'."
+      - type: TextBox
+        name: file
+        format: string
+        width: largest
+      - type: LayoutBox
+        style: inline
+        children:
+          - type: ComboBox
+            name: lang
+          - type: TextBox
+            name: alpha
+            format: number
+      - type: CheckBox
+        name: run
+  - type: CollapseBox
+    label: Sections
+    collapsed: false
+    margin: large
+    children:
+      - type: CheckBox
+        name: secMethod
+      - type: CheckBox
+        name: secResults
+      - type: CheckBox
+        name: secList
+      - type: CheckBox
+        name: secTables
+  - type: CollapseBox
+    label: Local AI (Ollama)
+    collapsed: false
+    margin: large
+    children:
+      - type: CheckBox
+        name: useLLM
+      - type: TextBox
+        name: model
+        format: string
+        width: large
+        enable: (useLLM)
+      - type: TextBox
+        name: endpoint
+        format: string
+        width: largest
+        enable: (useLLM)
+      - type: TextBox
+        name: llmTimeout
+        format: number
+        enable: (useLLM)
