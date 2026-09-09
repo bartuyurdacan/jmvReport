@@ -11,6 +11,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             lang = "tr",
             secMethod = TRUE,
             secResults = TRUE,
+            secInterp = TRUE,
             secList = TRUE,
             secTables = FALSE,
             alpha = 0.05,
@@ -47,6 +48,10 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..secResults <- jmvcore::OptionBool$new(
                 "secResults",
                 secResults,
+                default=TRUE)
+            private$..secInterp <- jmvcore::OptionBool$new(
+                "secInterp",
+                secInterp,
                 default=TRUE)
             private$..secList <- jmvcore::OptionBool$new(
                 "secList",
@@ -86,6 +91,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..lang)
             self$.addOption(private$..secMethod)
             self$.addOption(private$..secResults)
+            self$.addOption(private$..secInterp)
             self$.addOption(private$..secList)
             self$.addOption(private$..secTables)
             self$.addOption(private$..alpha)
@@ -100,6 +106,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         lang = function() private$..lang$value,
         secMethod = function() private$..secMethod$value,
         secResults = function() private$..secResults$value,
+        secInterp = function() private$..secInterp$value,
         secList = function() private$..secList$value,
         secTables = function() private$..secTables$value,
         alpha = function() private$..alpha$value,
@@ -113,6 +120,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..lang = NA,
         ..secMethod = NA,
         ..secResults = NA,
+        ..secInterp = NA,
         ..secList = NA,
         ..secTables = NA,
         ..alpha = NA,
@@ -129,6 +137,7 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         info = function() private$.items[["info"]],
         method = function() private$.items[["method"]],
         results = function() private$.items[["results"]],
+        interp = function() private$.items[["interp"]],
         list = function() private$.items[["list"]],
         tables = function() private$.items[["tables"]],
         warnings = function() private$.items[["warnings"]]),
@@ -175,6 +184,20 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="results",
                 title="Results",
                 visible="(secResults)",
+                clearWith=list(
+                    "run",
+                    "file",
+                    "lang",
+                    "useLLM",
+                    "model",
+                    "endpoint",
+                    "alpha",
+                    "llmTimeout")))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="interp",
+                title="AI Interpretation",
+                visible="(secInterp && useLLM)",
                 clearWith=list(
                     "run",
                     "file",
@@ -285,6 +308,7 @@ reportOmvBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param lang .
 #' @param secMethod .
 #' @param secResults .
+#' @param secInterp .
 #' @param secList .
 #' @param secTables .
 #' @param alpha .
@@ -297,6 +321,7 @@ reportOmvBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$info} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$method} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$results} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$interp} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$list} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$tables} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$warnings} \tab \tab \tab \tab \tab a html \cr
@@ -315,6 +340,7 @@ reportOmv <- function(
     lang = "tr",
     secMethod = TRUE,
     secResults = TRUE,
+    secInterp = TRUE,
     secList = TRUE,
     secTables = FALSE,
     alpha = 0.05,
@@ -333,6 +359,7 @@ reportOmv <- function(
         lang = lang,
         secMethod = secMethod,
         secResults = secResults,
+        secInterp = secInterp,
         secList = secList,
         secTables = secTables,
         alpha = alpha,

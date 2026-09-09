@@ -71,3 +71,18 @@ llm_polish <- function(template_html, kind = c("results", "method"), lang = "tr"
   if (!fid$ok) return(list(html = template_html, used = FALSE, note = paste0("fidelity: ", fid$reason)))
   list(html = out, used = TRUE, note = NULL, eval_count = r$eval_count)
 }
+
+#' Ask the LLM for an interpretation paragraph of the (template) results text.
+#' Numbers not present in the source are rejected; dropping numbers is allowed.
+llm_interpret <- function(results_html, lang = "tr", model = "qwen3.5:4b", endpoint = default_endpoint(), timeout = 600) {
+  sys_prompt <- read_prompt("system", lang); task <- read_prompt("interpret", lang)
+  if (!nzchar(sys_prompt) || !nzchar(task)) return(list(ok = FALSE, note = "prompt file missing"))
+  src <- split_tables(results_html)$text
+  r <- ollama_chat(sys_prompt, paste0(task, "\n\n<<<\n", src, "\n>>>"), model = model, endpoint = endpoint, timeout = timeout, num_predict = 900)
+  if (!isTRUE(r$ok)) return(list(ok = FALSE, note = r$error))
+  out <- r$text
+  if (!grepl("<p>", out, fixed = TRUE)) out <- paste0("<p>", gsub("\n{2,}", "</p><p>", out), "</p>")
+  fid <- check_fidelity(out, results_html, allow_missing_ratio = 1)
+  if (!fid$ok) return(list(ok = FALSE, note = paste0("fidelity: ", fid$reason)))
+  list(ok = TRUE, html = out)
+}

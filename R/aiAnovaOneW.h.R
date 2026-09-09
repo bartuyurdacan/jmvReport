@@ -16,7 +16,7 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
             norm = TRUE,
             eqv = TRUE,
             lang = "tr",
-            useLLM = FALSE,
+            useLLM = TRUE,
             model = "qwen3.5:4b",
             endpoint = "http://localhost:11434", ...) {
 
@@ -82,7 +82,7 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
             private$..useLLM <- jmvcore::OptionBool$new(
                 "useLLM",
                 useLLM,
-                default=FALSE)
+                default=TRUE)
             private$..model <- jmvcore::OptionString$new(
                 "model",
                 model,
@@ -445,7 +445,7 @@ aiAnovaOneW <- function(
     norm = TRUE,
     eqv = TRUE,
     lang = "tr",
-    useLLM = FALSE,
+    useLLM = TRUE,
     model = "qwen3.5:4b",
     endpoint = "http://localhost:11434") {
 

@@ -20,18 +20,23 @@ build_report_html <- function(summary, lang, useLLM, model, endpoint, checkpoint
   L <- i18n(lang)
   results <- render_results_text(summary, lang)
   method <- para(method_sentence(summary, lang))
-  notes <- character(); used <- FALSE
+  notes <- character(); used <- FALSE; interp <- NULL
   if (isTRUE(useLLM)) {
     av <- ollama_available(endpoint)
     if (!isTRUE(av$ok)) notes <- c(notes, sprintf(L$llm_unavailable, av$error))
     else if (length(av$models) && !(model %in% av$models) && !(paste0(model, ":latest") %in% av$models)) notes <- c(notes, tx(lang, paste0("Model '", model, "' Ollama'da yüklü değil (yüklü: ", paste(av$models, collapse = ", "), ")."), paste0("Model '", model, "' is not installed in Ollama (installed: ", paste(av$models, collapse = ", "), ").")))
     else {
       if (is.function(checkpoint)) checkpoint()
+      template_results <- results
       pr <- llm_polish(results, "results", lang, model, endpoint, timeout = timeout)
       if (pr$used) { results <- pr$html; used <- TRUE } else notes <- c(notes, sprintf(L$llm_fidelity_fail, pr$note))
+      if (is.function(checkpoint)) checkpoint()
+      it <- llm_interpret(template_results, lang, model, endpoint, timeout = timeout)
+      if (isTRUE(it$ok)) interp <- it$html else notes <- c(notes, paste0(L$interp_title, ": ", it$note))
     }
   }
   html <- paste0("<h3>", L$method_title, "</h3>", method, "<h3>", L$results_title, "</h3>", results,
+                 if (!is.null(interp)) paste0("<h3>", L$interp_title, "</h3>", interp, "<p style='color:#777;font-size:90%'>", sprintf(L$interp_note, html_escape(model)), "</p>") else "",
                  "<p style='color:#777;font-size:90%'>", if (used) sprintf(L$layer_llm, html_escape(model)) else L$layer_template, "</p>")
   list(html = html, notes = notes, used = used)
 }

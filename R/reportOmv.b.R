@@ -10,6 +10,7 @@ reportOmvClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Class(
             self$results$method$setTitle(L$method_title)
             self$results$results$setTitle(L$results_title)
             self$results$warnings$setTitle(L$warnings_title)
+            self$results$interp$setTitle(L$interp_title)
             self$results$list$setTitle(if (self$options$lang == "tr") "Dosyadaki analizler" else "Analyses in the file")
             self$results$tables$setTitle(if (self$options$lang == "tr") "Yeniden hesaplanan tablolar" else "Recomputed tables")
             self$results$list$getColumn("analysis")$setTitle(L$analysis)
@@ -26,7 +27,7 @@ reportOmvClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Class(
                 self$results$warnings$setVisible(FALSE)
                 return()
             }
-            sections <- c(if (self$options$secMethod) "method", if (self$options$secResults) "results")
+            sections <- c(if (self$options$secMethod) "method", if (self$options$secResults) "results", if (self$options$secInterp) "interpret")
             self_ <- self
             rep <- report_from_omv(
                 file = self$options$file, lang = lang, useLLM = self$options$useLLM,
@@ -41,6 +42,7 @@ reportOmvClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Class(
             self$results$info$setContent(rep$info)
             self$results$method$setContent(rep$method)
             self$results$results$setContent(rep$results)
+            if (!is.null(rep$interp)) self$results$interp$setContent(paste0(rep$interp, "<p style='color:#777;font-size:90%'>", sprintf(L$interp_note, html_escape(self$options$model)), "</p>"))
             tbl <- self$results$list
             df <- rep$list_df
             for (i in seq_len(nrow(df))) {

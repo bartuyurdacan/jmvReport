@@ -33,6 +33,8 @@ children:
       - type: CheckBox
         name: secResults
       - type: CheckBox
+        name: secInterp
+      - type: CheckBox
         name: secList
       - type: CheckBox
         name: secTables

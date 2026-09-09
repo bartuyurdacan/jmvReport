@@ -12,7 +12,7 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             kendall = FALSE,
             ci = FALSE,
             lang = "tr",
-            useLLM = FALSE,
+            useLLM = TRUE,
             model = "qwen3.5:4b",
             endpoint = "http://localhost:11434", ...) {
 
@@ -56,7 +56,7 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..useLLM <- jmvcore::OptionBool$new(
                 "useLLM",
                 useLLM,
-                default=FALSE)
+                default=TRUE)
             private$..model <- jmvcore::OptionString$new(
                 "model",
                 model,
@@ -260,7 +260,7 @@ aiCorr <- function(
     kendall = FALSE,
     ci = FALSE,
     lang = "tr",
-    useLLM = FALSE,
+    useLLM = TRUE,
     model = "qwen3.5:4b",
     endpoint = "http://localhost:11434") {
 

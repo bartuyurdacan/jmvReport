@@ -51,6 +51,11 @@ options:
       type: Bool
       default: true
 
+    - name: secInterp
+      title: AI interpretation of the findings
+      type: Bool
+      default: true
+
     - name: secList
       title: Analysis list table
       type: Bool

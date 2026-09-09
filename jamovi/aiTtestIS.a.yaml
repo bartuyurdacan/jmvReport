@@ -83,9 +83,9 @@ options:
       default: tr
 
     - name: useLLM
-      title: Polish wording with a local AI model (Ollama)
+      title: AI wording and interpretation (Ollama, local)
       type: Bool
-      default: false
+      default: true
 
     - name: model
       title: Ollama model

@@ -18,7 +18,7 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
             pcCol = FALSE,
             exp = FALSE,
             lang = "tr",
-            useLLM = FALSE,
+            useLLM = TRUE,
             model = "qwen3.5:4b",
             endpoint = "http://localhost:11434", ...) {
 
@@ -90,7 +90,7 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
             private$..useLLM <- jmvcore::OptionBool$new(
                 "useLLM",
                 useLLM,
-                default=FALSE)
+                default=TRUE)
             private$..model <- jmvcore::OptionString$new(
                 "model",
                 model,
@@ -326,7 +326,7 @@ aiContTables <- function(
     pcCol = FALSE,
     exp = FALSE,
     lang = "tr",
-    useLLM = FALSE,
+    useLLM = TRUE,
     model = "qwen3.5:4b",
     endpoint = "http://localhost:11434") {
 

@@ -46,6 +46,20 @@ items:
         - alpha
         - llmTimeout
 
+    - name: interp
+      title: AI Interpretation
+      type: Html
+      visible: (secInterp && useLLM)
+      clearWith:
+        - run
+        - file
+        - lang
+        - useLLM
+        - model
+        - endpoint
+        - alpha
+        - llmTimeout
+
     - name: list
       title: Analyses in the file
       type: Table
