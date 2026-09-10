@@ -12,6 +12,8 @@ children:
         label: "Built-in AI is optional. Installation downloads a verified model of approximately 2.4 GB and a platform-specific llama.cpp runtime."
       - type: Label
         label: "The files are stored in your user cache, not inside the jamovi module."
+      - type: Label
+        label: "OpenAI API shortcut: set OPENAI_API_KEY before starting jamovi, then select OpenAI API (quick setup). The key is not stored in the jamovi file."
       - type: CheckBox
         name: repair
       - type: CheckBox

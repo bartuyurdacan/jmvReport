@@ -25,7 +25,7 @@ report_from_omv(
 
 \item{useLLM}{Whether to use an AI backend.}
 
-\item{backend}{One of auto, ollama, builtin, or openai.}
+\item{backend}{One of auto, ollama, builtin, openai_api, or openai.}
 
 \item{model}{Model identifier for Ollama or a custom server.}
 

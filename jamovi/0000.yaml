@@ -1,7 +1,7 @@
 ---
 title: AI Report Writer
 name: jmvReport
-version: 0.2.0
+version: 0.2.1
 jms: '1.0'
 authors:
   - Fikret Bartu Yurdacan
@@ -11,8 +11,8 @@ type: R
 description: >-
   Writes English APA-style Method and Results text from jamovi analyses.
   Statistical values come from deterministic templates. Optional AI can use
-  Ollama, a managed built-in llama.cpp runtime, or a user-configured
-  OpenAI-compatible server; rewritten values are checked before use.
+  Ollama, a managed built-in llama.cpp runtime, the OpenAI API shortcut, or a
+  user-configured OpenAI-compatible server.
 analyses:
   - title: Report Writer (from saved file)
     name: reportOmv

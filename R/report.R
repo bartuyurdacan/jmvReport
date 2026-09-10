@@ -4,7 +4,7 @@
 #' @param file Path to a saved .omv file; NULL enables automatic discovery.
 #' @param lang Retained for compatibility; output is always English.
 #' @param useLLM Whether to use an AI backend.
-#' @param backend One of auto, ollama, builtin, or openai.
+#' @param backend One of auto, ollama, builtin, openai_api, or openai.
 #' @param model Model identifier for Ollama or a custom server.
 #' @param endpoint Optional Ollama or OpenAI-compatible server URL.
 #' @param sections Report sections to generate.

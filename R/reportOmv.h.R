@@ -72,6 +72,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "auto",
                     "ollama",
                     "builtin",
+                    "openai_api",
                     "openai"),
                 default="auto")
             private$..polish <- jmvcore::OptionBool$new(
@@ -392,4 +393,3 @@ reportOmv <- function(
 
     analysis$results
 }
-

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1 — 2026-09-10
+
+- Made AI interpretation a dedicated AI-only call with no response-marker dependency.
+- Kept optional Results polishing separate and protected by number-fidelity checks.
+- Added an OpenAI API quick setup using the official endpoint, `gpt-4.1-mini`,
+  and the standard `OPENAI_API_KEY` environment variable.
+- Improved fallback messages so interpretation failures are not described as
+  deterministic interpretation.
+
 ## 0.2.0 — 2026-09-10
 
 - Made the module and generated reports English-only.

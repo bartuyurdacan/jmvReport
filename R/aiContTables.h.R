@@ -93,6 +93,7 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                     "auto",
                     "ollama",
                     "builtin",
+                    "openai_api",
                     "openai"),
                 default="auto")
             private$..interp <- jmvcore::OptionBool$new(
@@ -211,21 +212,21 @@ aiContTablesResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                     "fisher"),
                 columns=list(
                     list(
-                        `name`="test", 
-                        `title`="", 
+                        `name`="test",
+                        `title`="",
                         `type`="text"),
                     list(
-                        `name`="value", 
-                        `title`="Value", 
+                        `name`="value",
+                        `title`="Value",
                         `type`="number"),
                     list(
-                        `name`="df", 
-                        `title`="df", 
+                        `name`="df",
+                        `title`="df",
                         `type`="integer"),
                     list(
-                        `name`="p", 
-                        `title`="p", 
-                        `type`="number", 
+                        `name`="p",
+                        `title`="p",
+                        `type`="number",
                         `format`="zto,pvalue"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -238,19 +239,19 @@ aiContTablesResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                     "cols"),
                 columns=list(
                     list(
-                        `name`="cont", 
-                        `title`="Contingency coefficient", 
-                        `type`="number", 
+                        `name`="cont",
+                        `title`="Contingency coefficient",
+                        `type`="number",
                         `visible`="(contCoef)"),
                     list(
-                        `name`="phi", 
-                        `title`="Phi", 
-                        `type`="number", 
+                        `name`="phi",
+                        `title`="Phi",
+                        `type`="number",
                         `visible`="(phiCra)"),
                     list(
-                        `name`="cra", 
-                        `title`="Cram\u00E9r's V", 
-                        `type`="number", 
+                        `name`="cra",
+                        `title`="Cram\u00E9r's V",
+                        `type`="number",
                         `visible`="(phiCra)"))))
             self$add(jmvcore::Html$new(
                 options=options,
@@ -300,7 +301,7 @@ aiContTablesBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
 #' Contingency Tables + Report
 #'
-#' Chi-square test of independence (with Fisher's exact test and effect sizes) 
+#' Chi-square test of independence (with Fisher's exact test and effect sizes)
 #' and an APA-style report paragraph.
 #' @param data .
 #' @param rows .
@@ -397,4 +398,3 @@ aiContTables <- function(
 
     analysis$results
 }
-

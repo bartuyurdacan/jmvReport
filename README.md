@@ -8,12 +8,20 @@
 - **Analyses with Report** provides wrappers for independent-samples t tests,
   one-way ANOVA/Kruskal–Wallis tests, correlations, and contingency tables.
 
+## Screenshots
+
+![One-way ANOVA options and English report](docs/screenshots/jmvreport-anova.png)
+
+![AI-generated interpretation in the jamovi results panel](docs/screenshots/jmvreport-ai-interpretation.png)
+
 ## How reporting works
 
 The deterministic R template engine is always available and remains the source
 of every statistical value. AI is optional and disabled by default. When AI is
-enabled, it may add a concise interpretation and, if requested, improve the
-wording. Rewritten text is checked against the computed values; jmvReport falls
+enabled, the interpretation is generated only by the selected AI backend in a
+dedicated call; it is never produced by a rule-based or deterministic
+interpretation engine. Optional Results polishing uses a second, independent
+call. Rewritten text is checked against the computed values; jmvReport falls
 back to the template text if the check fails.
 
 The AI backend can be selected per analysis:
@@ -22,12 +30,15 @@ The AI backend can be selected per analysis:
   runtime.
 - **Ollama** uses the local or network Ollama server specified in the options.
 - **Built-in llama.cpp** runs on `127.0.0.1` with a per-session access token.
+- **OpenAI API (quick setup)** automatically uses `https://api.openai.com/v1`,
+  `gpt-4.1-mini`, and the standard `OPENAI_API_KEY` environment variable.
 - **OpenAI-compatible server** connects to a user-supplied `/v1` endpoint. Set
-  the optional API key in the `JMVREPORT_API_KEY` environment variable.
+  its optional API key in the `JMVREPORT_API_KEY` environment variable.
 
-With Ollama or the built-in backend, data stays on the computer. A custom
-OpenAI-compatible endpoint receives the result digest sent to it, so its privacy
-policy and data-handling terms apply.
+With Ollama or the built-in backend, data stays on the computer. OpenAI API
+and custom endpoints receive the result digest sent to them, so their privacy
+policies and data-handling terms apply. API keys are read from the environment
+and are not stored in the jamovi analysis or `.omv` file.
 
 ## Built-in AI setup
 

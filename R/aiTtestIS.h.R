@@ -93,6 +93,7 @@ aiTtestISOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "auto",
                     "ollama",
                     "builtin",
+                    "openai_api",
                     "openai"),
                 default="auto")
             private$..interp <- jmvcore::OptionBool$new(
@@ -203,128 +204,128 @@ aiTtestISResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "ciWidth"),
                 columns=list(
                     list(
-                        `name`="var[stud]", 
-                        `title`="", 
-                        `type`="text", 
-                        `combineBelow`=TRUE, 
+                        `name`="var[stud]",
+                        `title`="",
+                        `type`="text",
+                        `combineBelow`=TRUE,
                         `visible`="(students)"),
                     list(
-                        `name`="name[stud]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="Student's t", 
+                        `name`="name[stud]",
+                        `title`="",
+                        `type`="text",
+                        `content`="Student's t",
                         `visible`="(students)"),
                     list(
-                        `name`="stat[stud]", 
-                        `title`="Statistic", 
-                        `type`="number", 
+                        `name`="stat[stud]",
+                        `title`="Statistic",
+                        `type`="number",
                         `visible`="(students)"),
                     list(
-                        `name`="df[stud]", 
-                        `title`="df", 
-                        `type`="number", 
+                        `name`="df[stud]",
+                        `title`="df",
+                        `type`="number",
                         `visible`="(students)"),
                     list(
-                        `name`="p[stud]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[stud]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(students)"),
                     list(
-                        `name`="md[stud]", 
-                        `title`="Mean difference", 
-                        `type`="number", 
+                        `name`="md[stud]",
+                        `title`="Mean difference",
+                        `type`="number",
                         `visible`="(students)"),
                     list(
-                        `name`="cil[stud]", 
-                        `title`="Lower", 
-                        `type`="number", 
+                        `name`="cil[stud]",
+                        `title`="Lower",
+                        `type`="number",
                         `visible`="(students && ci)"),
                     list(
-                        `name`="ciu[stud]", 
-                        `title`="Upper", 
-                        `type`="number", 
+                        `name`="ciu[stud]",
+                        `title`="Upper",
+                        `type`="number",
                         `visible`="(students && ci)"),
                     list(
-                        `name`="es[stud]", 
-                        `title`="Cohen's d", 
-                        `type`="number", 
+                        `name`="es[stud]",
+                        `title`="Cohen's d",
+                        `type`="number",
                         `visible`="(students && effectSize)"),
                     list(
-                        `name`="var[welc]", 
-                        `title`="", 
-                        `type`="text", 
-                        `combineBelow`=TRUE, 
+                        `name`="var[welc]",
+                        `title`="",
+                        `type`="text",
+                        `combineBelow`=TRUE,
                         `visible`="(welchs)"),
                     list(
-                        `name`="name[welc]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="Welch's t", 
+                        `name`="name[welc]",
+                        `title`="",
+                        `type`="text",
+                        `content`="Welch's t",
                         `visible`="(welchs)"),
                     list(
-                        `name`="stat[welc]", 
-                        `title`="Statistic", 
-                        `type`="number", 
+                        `name`="stat[welc]",
+                        `title`="Statistic",
+                        `type`="number",
                         `visible`="(welchs)"),
                     list(
-                        `name`="df[welc]", 
-                        `title`="df", 
-                        `type`="number", 
+                        `name`="df[welc]",
+                        `title`="df",
+                        `type`="number",
                         `visible`="(welchs)"),
                     list(
-                        `name`="p[welc]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[welc]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(welchs)"),
                     list(
-                        `name`="md[welc]", 
-                        `title`="Mean difference", 
-                        `type`="number", 
+                        `name`="md[welc]",
+                        `title`="Mean difference",
+                        `type`="number",
                         `visible`="(welchs)"),
                     list(
-                        `name`="cil[welc]", 
-                        `title`="Lower", 
-                        `type`="number", 
+                        `name`="cil[welc]",
+                        `title`="Lower",
+                        `type`="number",
                         `visible`="(welchs && ci)"),
                     list(
-                        `name`="ciu[welc]", 
-                        `title`="Upper", 
-                        `type`="number", 
+                        `name`="ciu[welc]",
+                        `title`="Upper",
+                        `type`="number",
                         `visible`="(welchs && ci)"),
                     list(
-                        `name`="es[welc]", 
-                        `title`="Cohen's d", 
-                        `type`="number", 
+                        `name`="es[welc]",
+                        `title`="Cohen's d",
+                        `type`="number",
                         `visible`="(welchs && effectSize)"),
                     list(
-                        `name`="var[mann]", 
-                        `title`="", 
-                        `type`="text", 
-                        `combineBelow`=TRUE, 
+                        `name`="var[mann]",
+                        `title`="",
+                        `type`="text",
+                        `combineBelow`=TRUE,
                         `visible`="(mann)"),
                     list(
-                        `name`="name[mann]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="Mann-Whitney U", 
+                        `name`="name[mann]",
+                        `title`="",
+                        `type`="text",
+                        `content`="Mann-Whitney U",
                         `visible`="(mann)"),
                     list(
-                        `name`="stat[mann]", 
-                        `title`="Statistic", 
-                        `type`="number", 
+                        `name`="stat[mann]",
+                        `title`="Statistic",
+                        `type`="number",
                         `visible`="(mann)"),
                     list(
-                        `name`="p[mann]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[mann]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(mann)"),
                     list(
-                        `name`="es[mann]", 
-                        `title`="Rank-biserial r", 
-                        `type`="number", 
+                        `name`="es[mann]",
+                        `title`="Rank-biserial r",
+                        `type`="number",
                         `visible`="(mann && effectSize)"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -336,17 +337,17 @@ aiTtestISResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "group"),
                 columns=list(
                     list(
-                        `name`="name", 
-                        `title`="", 
+                        `name`="name",
+                        `title`="",
                         `type`="text"),
                     list(
-                        `name`="w", 
-                        `title`="W", 
+                        `name`="w",
+                        `title`="W",
                         `type`="number"),
                     list(
-                        `name`="p", 
-                        `title`="p", 
-                        `type`="number", 
+                        `name`="p",
+                        `title`="p",
+                        `type`="number",
                         `format`="zto,pvalue"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -358,25 +359,25 @@ aiTtestISResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "group"),
                 columns=list(
                     list(
-                        `name`="name", 
-                        `title`="", 
+                        `name`="name",
+                        `title`="",
                         `type`="text"),
                     list(
-                        `name`="f", 
-                        `title`="F", 
+                        `name`="f",
+                        `title`="F",
                         `type`="number"),
                     list(
-                        `name`="df", 
-                        `title`="df", 
+                        `name`="df",
+                        `title`="df",
                         `type`="integer"),
                     list(
-                        `name`="df2", 
-                        `title`="df2", 
+                        `name`="df2",
+                        `title`="df2",
                         `type`="integer"),
                     list(
-                        `name`="p", 
-                        `title`="p", 
-                        `type`="number", 
+                        `name`="p",
+                        `title`="p",
+                        `type`="number",
                         `format`="zto,pvalue"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -388,48 +389,48 @@ aiTtestISResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "group"),
                 columns=list(
                     list(
-                        `name`="dep", 
-                        `title`="", 
+                        `name`="dep",
+                        `title`="",
                         `type`="text"),
                     list(
-                        `name`="group[1]", 
-                        `title`="Group", 
+                        `name`="group[1]",
+                        `title`="Group",
                         `type`="text"),
                     list(
-                        `name`="num[1]", 
-                        `title`="N", 
+                        `name`="num[1]",
+                        `title`="N",
                         `type`="integer"),
                     list(
-                        `name`="mean[1]", 
-                        `title`="Mean", 
+                        `name`="mean[1]",
+                        `title`="Mean",
                         `type`="number"),
                     list(
-                        `name`="med[1]", 
-                        `title`="Median", 
+                        `name`="med[1]",
+                        `title`="Median",
                         `type`="number"),
                     list(
-                        `name`="sd[1]", 
-                        `title`="SD", 
+                        `name`="sd[1]",
+                        `title`="SD",
                         `type`="number"),
                     list(
-                        `name`="group[2]", 
-                        `title`="Group", 
+                        `name`="group[2]",
+                        `title`="Group",
                         `type`="text"),
                     list(
-                        `name`="num[2]", 
-                        `title`="N", 
+                        `name`="num[2]",
+                        `title`="N",
                         `type`="integer"),
                     list(
-                        `name`="mean[2]", 
-                        `title`="Mean", 
+                        `name`="mean[2]",
+                        `title`="Mean",
                         `type`="number"),
                     list(
-                        `name`="med[2]", 
-                        `title`="Median", 
+                        `name`="med[2]",
+                        `title`="Median",
                         `type`="number"),
                     list(
-                        `name`="sd[2]", 
-                        `title`="SD", 
+                        `name`="sd[2]",
+                        `title`="SD",
                         `type`="number"))))
             self$add(jmvcore::Html$new(
                 options=options,
@@ -479,7 +480,7 @@ aiTtestISBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
 #' Independent Samples T-Test + Report
 #'
-#' Independent samples t-test (Student, Welch, Mann-Whitney) with an APA-style 
+#' Independent samples t-test (Student, Welch, Mann-Whitney) with an APA-style
 #' report paragraph.
 #' @param data .
 #' @param vars .
@@ -576,4 +577,3 @@ aiTtestIS <- function(
 
     analysis$results
 }
-

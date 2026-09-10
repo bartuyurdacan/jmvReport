@@ -1,7 +1,7 @@
 Package: jmvReport
 Type: Package
 Title: AI Report Writer for jamovi (APA Method and Results Text)
-Version: 0.2.0
+Version: 0.2.1
 Authors@R:
     person(given = "Fikret Bartu", family = "Yurdacan", role = c("aut", "cre"),
            email = "fbartuyurdacan@trakya.edu.tr")
@@ -9,8 +9,8 @@ Description: Writes English APA-style Method and Results paragraphs for
     analyses performed in jamovi. Reads analyses stored in a saved jamovi
     (.omv) file, recomputes supported results, and generates report text with a
     deterministic template engine. Optional AI interpretation and wording
-    improvement can use Ollama, a managed llama.cpp runtime, or a
-    user-configured OpenAI-compatible server. Statistical values are generated
+    improvement can use Ollama, a managed llama.cpp runtime, the OpenAI API
+    shortcut, or a user-configured OpenAI-compatible server. Statistical values are generated
     deterministically and AI-reworded text is checked against the computed
     results. Wrapper analyses provide report text directly below their tables.
 License: GPL-3

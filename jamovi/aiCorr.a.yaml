@@ -55,6 +55,8 @@ options:
           title: Ollama
         - name: builtin
           title: Built-in llama.cpp
+        - name: openai_api
+          title: OpenAI API (quick setup)
         - name: openai
           title: OpenAI-compatible server
       default: auto

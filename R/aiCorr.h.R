@@ -59,6 +59,7 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "auto",
                     "ollama",
                     "builtin",
+                    "openai_api",
                     "openai"),
                 default="auto")
             private$..interp <- jmvcore::OptionBool$new(
@@ -146,59 +147,59 @@ aiCorrResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "ci"),
                 columns=list(
                     list(
-                        `name`="a", 
-                        `title`="Variable 1", 
+                        `name`="a",
+                        `title`="Variable 1",
                         `type`="text"),
                     list(
-                        `name`="b", 
-                        `title`="Variable 2", 
+                        `name`="b",
+                        `title`="Variable 2",
                         `type`="text"),
                     list(
-                        `name`="n", 
-                        `title`="N", 
+                        `name`="n",
+                        `title`="N",
                         `type`="integer"),
                     list(
-                        `name`="r", 
-                        `title`="Pearson's r", 
-                        `type`="number", 
+                        `name`="r",
+                        `title`="Pearson's r",
+                        `type`="number",
                         `visible`="(pearson)"),
                     list(
-                        `name`="rcil", 
-                        `title`="Lower", 
-                        `type`="number", 
+                        `name`="rcil",
+                        `title`="Lower",
+                        `type`="number",
                         `visible`="(pearson && ci)"),
                     list(
-                        `name`="rciu", 
-                        `title`="Upper", 
-                        `type`="number", 
+                        `name`="rciu",
+                        `title`="Upper",
+                        `type`="number",
                         `visible`="(pearson && ci)"),
                     list(
-                        `name`="rp", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="rp",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(pearson)"),
                     list(
-                        `name`="rho", 
-                        `title`="Spearman's rho", 
-                        `type`="number", 
+                        `name`="rho",
+                        `title`="Spearman's rho",
+                        `type`="number",
                         `visible`="(spearman)"),
                     list(
-                        `name`="rhop", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="rhop",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(spearman)"),
                     list(
-                        `name`="tau", 
-                        `title`="Kendall's tau-b", 
-                        `type`="number", 
+                        `name`="tau",
+                        `title`="Kendall's tau-b",
+                        `type`="number",
                         `visible`="(kendall)"),
                     list(
-                        `name`="taup", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="taup",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(kendall)"))))
             self$add(jmvcore::Html$new(
                 options=options,
@@ -248,7 +249,7 @@ aiCorrBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
 #' Correlation Matrix + Report
 #'
-#' Pearson / Spearman / Kendall correlations with an APA-style report 
+#' Pearson / Spearman / Kendall correlations with an APA-style report
 #' paragraph.
 #' @param data .
 #' @param vars .
@@ -321,4 +322,3 @@ aiCorr <- function(
 
     analysis$results
 }
-

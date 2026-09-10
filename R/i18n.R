@@ -13,7 +13,7 @@ i18n <- function(lang = "en") {
     layer_llm = "Template text was polished by %s.",
     layer_interp = "Method and Results text came from the deterministic template engine; the interpretation came from %s.",
     llm_unavailable = "No AI backend was available (%s); deterministic template text is shown.",
-    llm_fidelity_fail = "AI output failed the number-fidelity check (%s); deterministic template text is shown.",
+    llm_fidelity_fail = "AI output was not used (%s). Results remain deterministic.",
     file_used = "File", n_analyses = "Number of analyses", elapsed = "Elapsed",
     no_file = "No saved jamovi file (.omv) was found. Save the file and enter its path, or leave the field empty to use the most recently saved .omv file.",
     unsupported = "Unsupported analysis (tables listed only)",

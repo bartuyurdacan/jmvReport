@@ -85,6 +85,7 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                     "auto",
                     "ollama",
                     "builtin",
+                    "openai_api",
                     "openai"),
                 default="auto")
             private$..interp <- jmvcore::OptionBool$new(
@@ -187,63 +188,63 @@ aiAnovaOneWResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                     "welchs"),
                 columns=list(
                     list(
-                        `name`="dep", 
-                        `title`="", 
-                        `type`="text", 
+                        `name`="dep",
+                        `title`="",
+                        `type`="text",
                         `combineBelow`=TRUE),
                     list(
-                        `name`="test[fisher]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="Fisher's", 
+                        `name`="test[fisher]",
+                        `title`="",
+                        `type`="text",
+                        `content`="Fisher's",
                         `visible`="(fishers)"),
                     list(
-                        `name`="F[fisher]", 
-                        `title`="F", 
-                        `type`="number", 
+                        `name`="F[fisher]",
+                        `title`="F",
+                        `type`="number",
                         `visible`="(fishers)"),
                     list(
-                        `name`="df1[fisher]", 
-                        `title`="df1", 
-                        `type`="number", 
+                        `name`="df1[fisher]",
+                        `title`="df1",
+                        `type`="number",
                         `visible`="(fishers)"),
                     list(
-                        `name`="df2[fisher]", 
-                        `title`="df2", 
-                        `type`="number", 
+                        `name`="df2[fisher]",
+                        `title`="df2",
+                        `type`="number",
                         `visible`="(fishers)"),
                     list(
-                        `name`="p[fisher]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[fisher]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(fishers)"),
                     list(
-                        `name`="test[welch]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="Welch's", 
+                        `name`="test[welch]",
+                        `title`="",
+                        `type`="text",
+                        `content`="Welch's",
                         `visible`="(welchs)"),
                     list(
-                        `name`="F[welch]", 
-                        `title`="F", 
-                        `type`="number", 
+                        `name`="F[welch]",
+                        `title`="F",
+                        `type`="number",
                         `visible`="(welchs)"),
                     list(
-                        `name`="df1[welch]", 
-                        `title`="df1", 
-                        `type`="number", 
+                        `name`="df1[welch]",
+                        `title`="df1",
+                        `type`="number",
                         `visible`="(welchs)"),
                     list(
-                        `name`="df2[welch]", 
-                        `title`="df2", 
-                        `type`="number", 
+                        `name`="df2[welch]",
+                        `title`="df2",
+                        `type`="number",
                         `visible`="(welchs)"),
                     list(
-                        `name`="p[welch]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[welch]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(welchs)"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -255,25 +256,25 @@ aiAnovaOneWResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                     "group"),
                 columns=list(
                     list(
-                        `name`="name", 
-                        `title`="", 
+                        `name`="name",
+                        `title`="",
                         `type`="text"),
                     list(
-                        `name`="chiSq", 
-                        `title`="\u03C7\u00B2", 
+                        `name`="chiSq",
+                        `title`="\u03C7\u00B2",
                         `type`="number"),
                     list(
-                        `name`="df", 
-                        `title`="df", 
+                        `name`="df",
+                        `title`="df",
                         `type`="integer"),
                     list(
-                        `name`="p", 
-                        `title`="p", 
-                        `type`="number", 
+                        `name`="p",
+                        `title`="p",
+                        `type`="number",
                         `format`="zto,pvalue"),
                     list(
-                        `name`="es", 
-                        `title`="\u03B5\u00B2", 
+                        `name`="es",
+                        `title`="\u03B5\u00B2",
                         `type`="number"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -286,29 +287,29 @@ aiAnovaOneWResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                     "deps"),
                 columns=list(
                     list(
-                        `name`="dep", 
-                        `title`="", 
-                        `type`="text", 
+                        `name`="dep",
+                        `title`="",
+                        `type`="text",
                         `combineBelow`=TRUE),
                     list(
-                        `name`="group", 
-                        `title`="Group", 
+                        `name`="group",
+                        `title`="Group",
                         `type`="text"),
                     list(
-                        `name`="num", 
-                        `title`="N", 
+                        `name`="num",
+                        `title`="N",
                         `type`="integer"),
                     list(
-                        `name`="mean", 
-                        `title`="Mean", 
+                        `name`="mean",
+                        `title`="Mean",
                         `type`="number"),
                     list(
-                        `name`="sd", 
-                        `title`="SD", 
+                        `name`="sd",
+                        `title`="SD",
                         `type`="number"),
                     list(
-                        `name`="se", 
-                        `title`="SE", 
+                        `name`="se",
+                        `title`="SE",
                         `type`="number"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -320,17 +321,17 @@ aiAnovaOneWResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                     "group"),
                 columns=list(
                     list(
-                        `name`="name", 
-                        `title`="", 
+                        `name`="name",
+                        `title`="",
                         `type`="text"),
                     list(
-                        `name`="w", 
-                        `title`="W", 
+                        `name`="w",
+                        `title`="W",
                         `type`="number"),
                     list(
-                        `name`="p", 
-                        `title`="p", 
-                        `type`="number", 
+                        `name`="p",
+                        `title`="p",
+                        `type`="number",
                         `format`="zto,pvalue"))))
             self$add(jmvcore::Table$new(
                 options=options,
@@ -342,25 +343,25 @@ aiAnovaOneWResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                     "group"),
                 columns=list(
                     list(
-                        `name`="dep", 
-                        `title`="", 
+                        `name`="dep",
+                        `title`="",
                         `type`="text"),
                     list(
-                        `name`="F", 
-                        `title`="F", 
+                        `name`="F",
+                        `title`="F",
                         `type`="number"),
                     list(
-                        `name`="df1", 
-                        `title`="df1", 
+                        `name`="df1",
+                        `title`="df1",
                         `type`="integer"),
                     list(
-                        `name`="df2", 
-                        `title`="df2", 
+                        `name`="df2",
+                        `title`="df2",
                         `type`="integer"),
                     list(
-                        `name`="p", 
-                        `title`="p", 
-                        `type`="number", 
+                        `name`="p",
+                        `title`="p",
+                        `type`="number",
                         `format`="zto,pvalue"))))
             self$add(jmvcore::Html$new(
                 options=options,
@@ -420,7 +421,7 @@ aiAnovaOneWBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
 #' One-Way ANOVA + Report
 #'
-#' One-way ANOVA (Fisher / Welch) and Kruskal-Wallis with post hoc tests and 
+#' One-way ANOVA (Fisher / Welch) and Kruskal-Wallis with post hoc tests and
 #' an APA-style report paragraph.
 #' @param data .
 #' @param deps .
@@ -513,4 +514,3 @@ aiAnovaOneW <- function(
 
     analysis$results
 }
-

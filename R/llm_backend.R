@@ -28,10 +28,11 @@ ollama_available <- function(endpoint = default_endpoint(), timeout = 3) {
   list(ok = TRUE, models = models, error = NULL)
 }
 
-model_installed <- function(model, models) length(models) > 0 && model %in% models || paste0(model, ":latest") %in% models
+model_installed <- function(model, models) length(models) > 0 &&
+  (model %in% models || paste0(model, ":latest") %in% models)
 
 llm_resolve_backend <- function(backend = "auto", model = "qwen3.5:4b", endpoint = "", timeout = 3) {
-  backend <- match.arg(tolower(backend), c("auto", "ollama", "builtin", "openai"))
+  backend <- match.arg(tolower(backend), c("auto", "ollama", "builtin", "openai_api", "openai"))
   ollama_error <- NULL
 
   if (backend %in% c("auto", "ollama")) {
@@ -50,6 +51,15 @@ llm_resolve_backend <- function(backend = "auto", model = "qwen3.5:4b", endpoint
     if (isTRUE(built$ok)) return(c(list(type = "openai"), built))
     if (identical(backend, "builtin")) return(built)
     return(list(ok = FALSE, error = paste(c(ollama_error, built$error), collapse = " Built-in fallback: ")))
+  }
+
+  if (identical(backend, "openai_api")) {
+    api_key <- Sys.getenv("OPENAI_API_KEY", "")
+    if (!nzchar(api_key)) {
+      return(list(ok = FALSE, error = "OpenAI API shortcut requires OPENAI_API_KEY to be set before jamovi starts."))
+    }
+    return(list(ok = TRUE, type = "openai", endpoint = "https://api.openai.com/v1",
+                api_key = api_key, model = "gpt-4.1-mini", label = "OpenAI API"))
   }
 
   endpoint <- normalise_endpoint(endpoint, "openai")
@@ -206,12 +216,30 @@ llm_polish_interpret <- function(results_html, lang = "en", model = "qwen3.5:4b"
 }
 
 llm_report <- function(results_html, connection, interpret = TRUE, polish = FALSE, timeout = 600) {
-  if (!polish) {
-    if (!interpret) return(list(html = results_html, interp = NULL, used = FALSE, note = NULL, stats = NULL))
-    r <- llm_interpret_only(results_html, timeout = timeout, connection = connection)
-    return(list(html = results_html, interp = r$interp, used = FALSE, note = r$note, stats = r$stats))
+  interpretation <- NULL
+  polished <- results_html
+  used <- FALSE
+  notes <- character()
+  stats <- NULL
+
+  # Interpretation is always a separate AI call and never depends on a marker.
+  if (isTRUE(interpret)) {
+    ir <- llm_interpret_only(results_html, timeout = timeout, connection = connection)
+    interpretation <- ir$interp
+    stats <- stats_add(stats, ir$stats)
+    if (!is.null(ir$note)) notes <- c(notes, paste0("interpretation: ", ir$note))
   }
-  llm_polish_interpret(results_html, interpret = interpret, timeout = timeout, connection = connection)
+
+  # Results polishing is independent and accepted only after fidelity checking.
+  if (isTRUE(polish)) {
+    pr <- llm_polish_interpret(results_html, interpret = FALSE, timeout = timeout, connection = connection)
+    stats <- stats_add(stats, pr$stats)
+    if (isTRUE(pr$used)) { polished <- pr$html; used <- TRUE }
+    if (!is.null(pr$note)) notes <- c(notes, paste0("Results wording: ", pr$note))
+  }
+
+  list(html = polished, interp = interpretation, used = used,
+       note = if (length(notes)) paste(notes, collapse = "; ") else NULL, stats = stats)
 }
 
 llm_polish <- function(template_html, kind = c("results", "method"), lang = "en", model = "qwen3.5:4b",

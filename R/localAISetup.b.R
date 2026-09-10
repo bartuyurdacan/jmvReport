@@ -17,9 +17,13 @@ localAISetupClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Clas
                     else ""
                 ))
                 if (!is.null(paths)) {
+                    api_ready <- nzchar(Sys.getenv("OPENAI_API_KEY", ""))
                     self$results$details$setContent(paste0(
                         "<p><b>Platform:</b> ", html_escape(status$platform), "</p>",
-                        "<p><b>Storage:</b> ", html_escape(paths$root), "</p>"
+                        "<p><b>Storage:</b> ", html_escape(paths$root), "</p>",
+                        "<p><b>OpenAI API shortcut:</b> ",
+                        if (api_ready) "Ready (OPENAI_API_KEY is set)." else "Set OPENAI_API_KEY before starting jamovi.",
+                        " The shortcut uses gpt-4.1-mini and does not store the key in the analysis.</p>"
                     ))
                 }
                 return()
