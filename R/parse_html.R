@@ -38,5 +38,5 @@ html_titles <- function(html) {
   doc <- tryCatch(xml2::read_html(html), error = function(e) NULL)
   if (is.null(doc)) return(character())
   t <- trimws(xml2::xml_text(xml2::xml_find_all(doc, "//body/h1")))
-  t[!t %in% c("Results", "Sonuçlar", "References", "Kaynaklar")]
+  t[!t %in% c("Results", "Sonu\u00E7lar", "References", "Kaynaklar")]
 }

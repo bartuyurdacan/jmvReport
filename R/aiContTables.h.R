@@ -17,12 +17,12 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
             pcRow = FALSE,
             pcCol = FALSE,
             exp = FALSE,
-            lang = "tr",
-            useLLM = TRUE,
+            useLLM = FALSE,
+            backend = "auto",
             interp = TRUE,
             polish = FALSE,
             model = "qwen3.5:4b",
-            endpoint = "http://localhost:11434", ...) {
+            endpoint = "", ...) {
 
             super$initialize(
                 package="jmvReport",
@@ -82,17 +82,19 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                 "exp",
                 exp,
                 default=FALSE)
-            private$..lang <- jmvcore::OptionList$new(
-                "lang",
-                lang,
-                options=list(
-                    "tr",
-                    "en"),
-                default="tr")
             private$..useLLM <- jmvcore::OptionBool$new(
                 "useLLM",
                 useLLM,
-                default=TRUE)
+                default=FALSE)
+            private$..backend <- jmvcore::OptionList$new(
+                "backend",
+                backend,
+                options=list(
+                    "auto",
+                    "ollama",
+                    "builtin",
+                    "openai"),
+                default="auto")
             private$..interp <- jmvcore::OptionBool$new(
                 "interp",
                 interp,
@@ -108,7 +110,7 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
             private$..endpoint <- jmvcore::OptionString$new(
                 "endpoint",
                 endpoint,
-                default="http://localhost:11434")
+                default="")
 
             self$.addOption(private$..rows)
             self$.addOption(private$..cols)
@@ -121,8 +123,8 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
             self$.addOption(private$..pcRow)
             self$.addOption(private$..pcCol)
             self$.addOption(private$..exp)
-            self$.addOption(private$..lang)
             self$.addOption(private$..useLLM)
+            self$.addOption(private$..backend)
             self$.addOption(private$..interp)
             self$.addOption(private$..polish)
             self$.addOption(private$..model)
@@ -140,8 +142,8 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
         pcRow = function() private$..pcRow$value,
         pcCol = function() private$..pcCol$value,
         exp = function() private$..exp$value,
-        lang = function() private$..lang$value,
         useLLM = function() private$..useLLM$value,
+        backend = function() private$..backend$value,
         interp = function() private$..interp$value,
         polish = function() private$..polish$value,
         model = function() private$..model$value,
@@ -158,8 +160,8 @@ aiContTablesOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
         ..pcRow = NA,
         ..pcCol = NA,
         ..exp = NA,
-        ..lang = NA,
         ..useLLM = NA,
+        ..backend = NA,
         ..interp = NA,
         ..polish = NA,
         ..model = NA,
@@ -256,8 +258,8 @@ aiContTablesResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                 title="Report text",
                 visible=TRUE,
                 clearWith=list(
-                    "lang",
                     "useLLM",
+                    "backend",
                     "interp",
                     "polish",
                     "model",
@@ -268,8 +270,8 @@ aiContTablesResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Clas
                 title="Warnings",
                 visible=FALSE,
                 clearWith=list(
-                    "lang",
                     "useLLM",
+                    "backend",
                     "interp",
                     "polish",
                     "model",
@@ -312,8 +314,8 @@ aiContTablesBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param pcRow .
 #' @param pcCol .
 #' @param exp .
-#' @param lang .
 #' @param useLLM .
+#' @param backend .
 #' @param interp .
 #' @param polish .
 #' @param model .
@@ -347,12 +349,12 @@ aiContTables <- function(
     pcRow = FALSE,
     pcCol = FALSE,
     exp = FALSE,
-    lang = "tr",
-    useLLM = TRUE,
+    useLLM = FALSE,
+    backend = "auto",
     interp = TRUE,
     polish = FALSE,
     model = "qwen3.5:4b",
-    endpoint = "http://localhost:11434") {
+    endpoint = "") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("aiContTables requires jmvcore to be installed (restart may be required)")
@@ -380,8 +382,8 @@ aiContTables <- function(
         pcRow = pcRow,
         pcCol = pcCol,
         exp = exp,
-        lang = lang,
         useLLM = useLLM,
+        backend = backend,
         interp = interp,
         polish = polish,
         model = model,

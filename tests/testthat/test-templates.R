@@ -10,36 +10,42 @@ make_ttest_summary <- function() list(
   opts = list(students = TRUE, welchs = TRUE, mann = TRUE, effectSize = TRUE, ci = TRUE, ciWidth = 95, norm = TRUE, eqv = TRUE, hypothesis = "different"),
   tables = list())
 
-test_that("Turkish and English t-test templates contain the key statistics", {
+test_that("the English t-test template contains the key statistics", {
   s <- make_ttest_summary()
-  tr <- render_results_text(s, "tr"); en <- render_results_text(s, "en")
-  for (txt in list(tr, en)) {
-    expect_true(grepl("<i>t</i>\\(58\\) = 1.92", txt))
-    expect_true(grepl("<i>p</i> = .060", txt))
-    expect_true(grepl("Cohen's <i>d</i> = 0.49", txt))
-    expect_true(grepl("<i>U</i> = 324.5", txt))
-    expect_true(grepl("<i>M</i> = 20.66, <i>SD</i> = 6.61", txt))
-  }
-  expect_true(grepl("anlamlı bir fark bulunmamıştır", tr))
+  en <- render_results_text(s, "en")
+  expect_true(grepl("<i>t</i>\\(58\\) = 1.92", en))
+  expect_true(grepl("<i>p</i> = .060", en))
+  expect_true(grepl("Cohen's <i>d</i> = 0.49", en))
+  expect_true(grepl("<i>U</i> = 324.5", en))
+  expect_true(grepl("<i>M</i> = 20.66, <i>SD</i> = 6.61", en))
   expect_true(grepl("no statistically significant difference", en))
-  expect_true(grepl("%95 GA", tr)); expect_true(grepl("95% CI", en))
+  expect_true(grepl("95% CI", en))
+})
+
+test_that("legacy language input cannot change report output from English", {
+  s <- make_ttest_summary()
+  expect_identical(render_results_text(s, "tr"), render_results_text(s, "en"))
+  expect_identical(render_method_text(list(s), "tr"), render_method_text(list(s), "en"))
 })
 
 test_that("method paragraph mentions tests and software", {
   s <- make_ttest_summary()
-  m <- render_method_text(list(s), "tr", jamovi_version = "2.7")
-  expect_true(grepl("Welch t-testi", m)); expect_true(grepl("Levene", m)); expect_true(grepl("jamovi 2.7", m))
-  m2 <- render_method_text(list(s), "en", jamovi_version = "2.7")
-  expect_true(grepl("Mann-Whitney U test", m2)); expect_true(grepl("&lt; .05", m2))
+  m <- render_method_text(list(s), "en", jamovi_version = "2.7")
+  expect_true(grepl("Welch's t-test", m))
+  expect_true(grepl("Mann-Whitney U test", m))
+  expect_true(grepl("Levene", m))
+  expect_true(grepl("jamovi 2.7", m))
+  expect_true(grepl("&lt; .05", m))
 })
 
 test_that("generic fallback renders tables for unsupported analyses", {
   s <- list(type = "foo", title = "Foo", supported = FALSE, opts = list(), tables = list(a = list(title = "T", df = data.frame(x = 1:2, y = c("a", "b")))))
   out <- render_results_text(s, "en", index = 3)
-  expect_true(grepl("<h3>3. Foo</h3>", out)); expect_true(grepl("<table", out))
+  expect_true(grepl("<h3>3. Foo</h3>", out))
+  expect_true(grepl("<table", out))
 })
 
-test_that("ollama_available fails gracefully on a dead endpoint", {
+test_that("ollama availability fails gracefully on a dead endpoint", {
   r <- ollama_available("http://127.0.0.1:1", timeout = 1)
   expect_false(r$ok)
 })

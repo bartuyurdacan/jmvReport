@@ -60,10 +60,11 @@ children:
     collapsed: false
     margin: large
     children:
-      - type: ComboBox
-        name: lang
       - type: CheckBox
         name: useLLM
+      - type: ComboBox
+        name: backend
+        enable: (useLLM)
       - type: CheckBox
         name: interp
         enable: (useLLM)

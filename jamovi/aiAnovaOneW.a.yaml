@@ -67,21 +67,25 @@ options:
       type: Bool
       default: true
 
-    - name: lang
-      title: Report language
+    - name: useLLM
+      title: Use AI interpretation and optional wording polish
+      type: Bool
+      default: false
+
+
+    - name: backend
+      title: AI backend
       type: List
       options:
-        - name: tr
-          title: Türkçe
-        - name: en
-          title: English
-      default: tr
-
-    - name: useLLM
-      title: AI wording and interpretation (Ollama, local)
-      type: Bool
-      default: true
-
+        - name: auto
+          title: Auto (Ollama, then built-in)
+        - name: ollama
+          title: Ollama
+        - name: builtin
+          title: Built-in llama.cpp
+        - name: openai
+          title: OpenAI-compatible server
+      default: auto
     - name: interp
       title: AI interpretation of the findings
       type: Bool
@@ -93,12 +97,12 @@ options:
       default: false
 
     - name: model
-      title: Ollama model
+      title: Model (Ollama or custom server)
       type: String
       default: "qwen3.5:4b"
 
     - name: endpoint
-      title: Ollama server
+      title: Custom server URL (optional)
       type: String
-      default: "http://localhost:11434"
+      default: ''
 ...

@@ -77,6 +77,7 @@ collect_tables <- function(x, path = "") {
 }
 
 #' Summarise any jmv results object
+#' @param res A jmv results object.
 #' @export
 summarize_results <- function(res) {
   type <- analysis_name(res)
@@ -213,7 +214,7 @@ ex_ANOVA <- function(res) {
   terms <- list(); resid_df <- NA_real_
   for (i in seq_len(nrow(main))) {
     nm <- chr_cell(main, "name", i)
-    if (nm %in% c("Residuals", "Artıklar")) { resid_df <- num_cell(main, "df", i); next }
+    if (nm %in% c("Residuals", "Art\u0131klar")) { resid_df <- num_cell(main, "df", i); next }
     if (nm %in% c("Overall model", "Overall Model")) next
     terms[[length(terms) + 1]] <- list(name = nm, ss = num_cell(main, "ss", i), df = num_cell(main, "df", i), F = num_cell(main, "F", i), p = num_cell(main, "p", i),
                                        etaSq = num_cell(main, "etaSq", i), etaSqP = num_cell(main, "etaSqP", i), omegaSq = num_cell(main, "omegaSq", i))
@@ -359,7 +360,7 @@ ex_contTables <- function(res) {
     if (!is.null(nom) && nrow(nom) >= i) r$phi <- lcol(nom, "v", "phi", i); if (!is.null(nom) && nrow(nom) >= i) r$cramer <- lcol(nom, "v", "cra", i); if (!is.null(nom) && nrow(nom) >= i) r$cc <- lcol(nom, "v", "cont", i)
     out[[length(out) + 1]] <- r
   }
-  # dimensions for Cramér thresholds
+  # dimensions for Cram\u00E9r thresholds
   n_rows_lv <- if (!is.null(freqs)) length(unique(freqs[[rows]][!freqs[[rows]] %in% c("Total", "Toplam")])) else NA
   n_cols_lv <- if (!is.null(freqs)) length(grep("\\[count\\]$", setdiff(names(freqs), ".total[count]"))) - as.integer("type[count]" %in% names(freqs)) else NA
   list(rows = rows, cols = cols, layers = layers, tests = out, dims = c(n_rows_lv, n_cols_lv), freqs = freqs,

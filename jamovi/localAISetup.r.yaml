@@ -1,0 +1,25 @@
+---
+name: localAISetup
+title: Local AI Setup
+jrs: '1.1'
+
+items:
+    - name: status
+      title: Status
+      type: Html
+      visible: true
+      clearWith:
+        - install
+        - repair
+
+    - name: details
+      title: Installation details
+      type: Html
+      visible: true
+      clearWith:
+        - install
+        - repair
+
+refs:
+    - jmvReport
+...

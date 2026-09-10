@@ -1,0 +1,14 @@
+FROM ./jmvreport-en-q8_0.gguf
+PARAMETER temperature 0.1
+PARAMETER num_ctx 4096
+PARAMETER stop "<|im_end|>"
+TEMPLATE """{{- if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{- range .Messages }}<|im_start|>{{ .Role }}
+{{ .Content }}<|im_end|>
+{{ end }}<|im_start|>assistant
+<think>
+
+</think>
+
+"""

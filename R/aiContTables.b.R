@@ -15,14 +15,14 @@ aiContTablesClass <- if (requireNamespace("jmvcore", quietly = TRUE)) R6::R6Clas
                 self$results$freqs$setContent(df_to_html(fq, digits = 4)) }
             t <- s$tests[[1]]; tbl <- self$results$tests; k <- 0
             add <- function(name, value, df, p) { k <<- k + 1; vals <- list(test = name, value = value, df = df, p = p); vals <- vals[!vapply(vals, function(v) is.null(v) || is.na(v), logical(1))]; tbl$addRow(rowKey = k, values = vals) }
-            if (o$chiSq) add("χ²", t$chi, t$df, t$p)
-            if (o$chiSqCorr) add("χ² continuity correction", t$chiCorr, t$df, t$pCorr)
+            if (o$chiSq) add("\u03C7\u00B2", t$chi, t$df, t$p)
+            if (o$chiSqCorr) add("\u03C7\u00B2 continuity correction", t$chiCorr, t$df, t$pCorr)
             if (o$likeRat) add("Likelihood ratio", t$lr, t$df, t$lrp)
             if (o$fisher) add("Fisher's exact test", t$fisher, NA, t$fisherp)
             add("N", t$N, NA, NA)
             nomv <- list(cont = t$cc, phi = t$phi, cra = t$cramer); nomv <- nomv[!vapply(nomv, function(v) is.null(v) || is.na(v), logical(1))]
             if (length(nomv)) self$results$nom$setRow(rowNo = 1, values = nomv)
-            rep <- build_report_html(s, o$lang, o$useLLM, o$model, o$endpoint, interpret = o$interp, polish = o$polish, checkpoint = function() private$.checkpoint())
+            rep <- build_report_html(s, o$useLLM, o$backend, o$model, o$endpoint, interpret = o$interp, polish = o$polish, checkpoint = function() private$.checkpoint())
             self$results$report$setContent(rep$html)
             set_warnings(self, rep$notes)
         })

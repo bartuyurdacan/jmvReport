@@ -1,18 +1,18 @@
 ---
 title: AI Report Writer
 name: jmvReport
-version: 0.1.1
+version: 0.2.0
 jms: '1.0'
 authors:
   - Fikret Bartu Yurdacan
 maintainer: Fikret Bartu Yurdacan <fbartuyurdacan@trakya.edu.tr>
-date: '2026-09-09'
+date: '2026-09-10'
 type: R
 description: >-
-  Writes APA-style Method and Results text (Turkish or English) for the analyses
-  you ran in jamovi. Reads all analyses from a saved .omv file or works directly
-  inside wrapper analyses. Numbers always come from the computed results; an
-  optional local language model (Ollama) only polishes the wording.
+  Writes English APA-style Method and Results text from jamovi analyses.
+  Statistical values come from deterministic templates. Optional AI can use
+  Ollama, a managed built-in llama.cpp runtime, or a user-configured
+  OpenAI-compatible server; rewritten values are checked before use.
 analyses:
   - title: Report Writer (from saved file)
     name: reportOmv
@@ -22,9 +22,10 @@ analyses:
     menuSubgroup: null
     description: >
       Reads every analysis stored in a saved jamovi file (.omv), recomputes the
-      results and writes APA-style Method and Results text. Numbers always come
-      from the computed results. An optional local language model (Ollama) only
-      rewords the text; the output is verified against the computed numbers.
+      results and writes English APA-style Method and Results text. Numbers
+      always come from the computed results. An optional local or
+      user-configured language model may interpret or reword the text; output is
+      checked against the computed values.
     category: analyses
   - title: Independent Samples T-Test + Report
     name: aiTtestIS
@@ -66,6 +67,16 @@ analyses:
       Chi-square test of independence (with Fisher's exact test and effect
       sizes) and an APA-style report paragraph.
     category: analyses
+  - title: Local AI Setup
+    name: localAISetup
+    ns: jmvReport
+    category: analyses
+    menuGroup: AI Report
+    menuTitle: Local AI Setup
+    description: >
+      Installs or repairs the optional built-in llama.cpp runtime and the
+      verified 2.39 GB Qwen3.5 model. Nothing is downloaded until the user
+      explicitly starts installation.
 datasets: []
 usesNative: false
 minApp: 2.3.0

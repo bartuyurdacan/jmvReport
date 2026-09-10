@@ -85,7 +85,7 @@ es_magnitude <- function(value, type = "d") {
   if (value < th[1]) "negligible" else if (value < th[2]) "small" else if (value < th[3]) "medium" else "large"
 }
 
-#' Cramér's V thresholds depend on min(df) — simplified per Cohen (1988)
+#' Cramer's V thresholds depend on min(df) -- simplified per Cohen (1988)
 es_magnitude_v <- function(v, min_dim) {
   v <- abs(suppressWarnings(as.numeric(v)))
   if (is.na(v)) return(NA_character_)
@@ -112,7 +112,7 @@ html_escape <- function(x) {
 sym <- function(s) paste0("<i>", s, "</i>")
 
 #' Join a character vector in natural language
-join_words <- function(x, lang = "tr") {
+join_words <- function(x, lang = "en") {
   x <- x[!is.na(x) & nzchar(x)]
   n <- length(x)
   if (n == 0) return("")
@@ -125,7 +125,7 @@ join_words <- function(x, lang = "tr") {
 #' Extract all numeric tokens from a text (for fidelity checking)
 num_tokens <- function(text) {
   text <- gsub("<[^>]+>", " ", text)
-  text <- gsub("−", "-", text)                # unicode minus
+  text <- gsub("\u2212", "-", text)                # unicode minus
   m <- gregexpr("-?(?:\\d+\\.\\d+|\\.\\d+|\\d+)", text, perl = TRUE)
   toks <- regmatches(text, m)[[1]]
   toks <- gsub("^-", "", toks)

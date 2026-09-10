@@ -1,0 +1,28 @@
+---
+name: localAISetup
+title: Local AI Setup
+menuGroup: AI Report
+version: '1.0.0'
+jas: '1.2'
+
+description:
+    main: >
+        Installs or repairs the optional built-in llama.cpp runtime and the
+        verified 2.39 GB Qwen3.5 model. Nothing is downloaded until the user
+        explicitly starts installation.
+    R:
+        dontrun: true
+        usage: |
+            localAISetup()
+
+options:
+    - name: install
+      title: Install built-in AI (downloads approximately 2.4 GB)
+      type: Bool
+      default: false
+
+    - name: repair
+      title: Repair the runtime installation
+      type: Bool
+      default: false
+...

@@ -15,12 +15,12 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
             desc = TRUE,
             norm = TRUE,
             eqv = TRUE,
-            lang = "tr",
-            useLLM = TRUE,
+            useLLM = FALSE,
+            backend = "auto",
             interp = TRUE,
             polish = FALSE,
             model = "qwen3.5:4b",
-            endpoint = "http://localhost:11434", ...) {
+            endpoint = "", ...) {
 
             super$initialize(
                 package="jmvReport",
@@ -74,17 +74,19 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                 "eqv",
                 eqv,
                 default=TRUE)
-            private$..lang <- jmvcore::OptionList$new(
-                "lang",
-                lang,
-                options=list(
-                    "tr",
-                    "en"),
-                default="tr")
             private$..useLLM <- jmvcore::OptionBool$new(
                 "useLLM",
                 useLLM,
-                default=TRUE)
+                default=FALSE)
+            private$..backend <- jmvcore::OptionList$new(
+                "backend",
+                backend,
+                options=list(
+                    "auto",
+                    "ollama",
+                    "builtin",
+                    "openai"),
+                default="auto")
             private$..interp <- jmvcore::OptionBool$new(
                 "interp",
                 interp,
@@ -100,7 +102,7 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
             private$..endpoint <- jmvcore::OptionString$new(
                 "endpoint",
                 endpoint,
-                default="http://localhost:11434")
+                default="")
 
             self$.addOption(private$..deps)
             self$.addOption(private$..group)
@@ -111,8 +113,8 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
             self$.addOption(private$..desc)
             self$.addOption(private$..norm)
             self$.addOption(private$..eqv)
-            self$.addOption(private$..lang)
             self$.addOption(private$..useLLM)
+            self$.addOption(private$..backend)
             self$.addOption(private$..interp)
             self$.addOption(private$..polish)
             self$.addOption(private$..model)
@@ -128,8 +130,8 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
         desc = function() private$..desc$value,
         norm = function() private$..norm$value,
         eqv = function() private$..eqv$value,
-        lang = function() private$..lang$value,
         useLLM = function() private$..useLLM$value,
+        backend = function() private$..backend$value,
         interp = function() private$..interp$value,
         polish = function() private$..polish$value,
         model = function() private$..model$value,
@@ -144,8 +146,8 @@ aiAnovaOneWOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
         ..desc = NA,
         ..norm = NA,
         ..eqv = NA,
-        ..lang = NA,
         ..useLLM = NA,
+        ..backend = NA,
         ..interp = NA,
         ..polish = NA,
         ..model = NA,
@@ -376,8 +378,8 @@ aiAnovaOneWResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                 title="Report text",
                 visible=TRUE,
                 clearWith=list(
-                    "lang",
                     "useLLM",
+                    "backend",
                     "interp",
                     "polish",
                     "model",
@@ -388,8 +390,8 @@ aiAnovaOneWResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class
                 title="Warnings",
                 visible=FALSE,
                 clearWith=list(
-                    "lang",
                     "useLLM",
+                    "backend",
                     "interp",
                     "polish",
                     "model",
@@ -430,8 +432,8 @@ aiAnovaOneWBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param desc .
 #' @param norm .
 #' @param eqv .
-#' @param lang .
 #' @param useLLM .
+#' @param backend .
 #' @param interp .
 #' @param polish .
 #' @param model .
@@ -466,12 +468,12 @@ aiAnovaOneW <- function(
     desc = TRUE,
     norm = TRUE,
     eqv = TRUE,
-    lang = "tr",
-    useLLM = TRUE,
+    useLLM = FALSE,
+    backend = "auto",
     interp = TRUE,
     polish = FALSE,
     model = "qwen3.5:4b",
-    endpoint = "http://localhost:11434") {
+    endpoint = "") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("aiAnovaOneW requires jmvcore to be installed (restart may be required)")
@@ -496,8 +498,8 @@ aiAnovaOneW <- function(
         desc = desc,
         norm = norm,
         eqv = eqv,
-        lang = lang,
         useLLM = useLLM,
+        backend = backend,
         interp = interp,
         polish = polish,
         model = model,

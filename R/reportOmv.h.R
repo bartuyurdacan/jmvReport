@@ -8,17 +8,17 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         initialize = function(
             run = FALSE,
             file = "",
-            lang = "tr",
             secMethod = TRUE,
             secResults = TRUE,
             secInterp = TRUE,
             secList = TRUE,
             secTables = FALSE,
             alpha = 0.05,
-            useLLM = TRUE,
+            useLLM = FALSE,
+            backend = "auto",
             polish = FALSE,
             model = "qwen3.5:4b",
-            endpoint = "http://localhost:11434",
+            endpoint = "",
             llmTimeout = 600, ...) {
 
             super$initialize(
@@ -35,13 +35,6 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "file",
                 file,
                 default="")
-            private$..lang <- jmvcore::OptionList$new(
-                "lang",
-                lang,
-                options=list(
-                    "tr",
-                    "en"),
-                default="tr")
             private$..secMethod <- jmvcore::OptionBool$new(
                 "secMethod",
                 secMethod,
@@ -71,7 +64,16 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..useLLM <- jmvcore::OptionBool$new(
                 "useLLM",
                 useLLM,
-                default=TRUE)
+                default=FALSE)
+            private$..backend <- jmvcore::OptionList$new(
+                "backend",
+                backend,
+                options=list(
+                    "auto",
+                    "ollama",
+                    "builtin",
+                    "openai"),
+                default="auto")
             private$..polish <- jmvcore::OptionBool$new(
                 "polish",
                 polish,
@@ -83,7 +85,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..endpoint <- jmvcore::OptionString$new(
                 "endpoint",
                 endpoint,
-                default="http://localhost:11434")
+                default="")
             private$..llmTimeout <- jmvcore::OptionInteger$new(
                 "llmTimeout",
                 llmTimeout,
@@ -93,7 +95,6 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
             self$.addOption(private$..run)
             self$.addOption(private$..file)
-            self$.addOption(private$..lang)
             self$.addOption(private$..secMethod)
             self$.addOption(private$..secResults)
             self$.addOption(private$..secInterp)
@@ -101,6 +102,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..secTables)
             self$.addOption(private$..alpha)
             self$.addOption(private$..useLLM)
+            self$.addOption(private$..backend)
             self$.addOption(private$..polish)
             self$.addOption(private$..model)
             self$.addOption(private$..endpoint)
@@ -109,7 +111,6 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     active = list(
         run = function() private$..run$value,
         file = function() private$..file$value,
-        lang = function() private$..lang$value,
         secMethod = function() private$..secMethod$value,
         secResults = function() private$..secResults$value,
         secInterp = function() private$..secInterp$value,
@@ -117,6 +118,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         secTables = function() private$..secTables$value,
         alpha = function() private$..alpha$value,
         useLLM = function() private$..useLLM$value,
+        backend = function() private$..backend$value,
         polish = function() private$..polish$value,
         model = function() private$..model$value,
         endpoint = function() private$..endpoint$value,
@@ -124,7 +126,6 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     private = list(
         ..run = NA,
         ..file = NA,
-        ..lang = NA,
         ..secMethod = NA,
         ..secResults = NA,
         ..secInterp = NA,
@@ -132,6 +133,7 @@ reportOmvOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..secTables = NA,
         ..alpha = NA,
         ..useLLM = NA,
+        ..backend = NA,
         ..polish = NA,
         ..model = NA,
         ..endpoint = NA,
@@ -167,8 +169,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "run",
                     "file",
-                    "lang",
                     "useLLM",
+                    "backend",
                     "model",
                     "endpoint",
                     "alpha",
@@ -182,8 +184,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "run",
                     "file",
-                    "lang",
                     "useLLM",
+                    "backend",
                     "model",
                     "endpoint",
                     "alpha",
@@ -197,8 +199,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "run",
                     "file",
-                    "lang",
                     "useLLM",
+                    "backend",
                     "model",
                     "endpoint",
                     "alpha",
@@ -212,8 +214,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "run",
                     "file",
-                    "lang",
                     "useLLM",
+                    "backend",
                     "model",
                     "endpoint",
                     "alpha",
@@ -227,37 +229,36 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 rows=0,
                 clearWith=list(
                     "run",
-                    "file",
-                    "lang"),
+                    "file"),
                 columns=list(
                     list(
-                        `name`="index", 
-                        `title`="#", 
+                        `name`="index",
+                        `title`="#",
                         `type`="integer"),
                     list(
-                        `name`="analysis", 
-                        `title`="Analysis", 
+                        `name`="analysis",
+                        `title`="Analysis",
                         `type`="text"),
                     list(
-                        `name`="type", 
-                        `title`="jmv function", 
+                        `name`="type",
+                        `title`="jmv function",
                         `type`="text"),
                     list(
-                        `name`="variables", 
-                        `title`="Variables", 
+                        `name`="variables",
+                        `title`="Variables",
                         `type`="text"),
                     list(
-                        `name`="stat", 
-                        `title`="Primary statistic", 
+                        `name`="stat",
+                        `title`="Primary statistic",
                         `type`="text"),
                     list(
-                        `name`="p", 
-                        `title`="p", 
-                        `type`="number", 
+                        `name`="p",
+                        `title`="p",
+                        `type`="number",
                         `format`="zto,pvalue"),
                     list(
-                        `name`="es", 
-                        `title`="Effect size", 
+                        `name`="es",
+                        `title`="Effect size",
                         `type`="text"))))
             self$add(jmvcore::Html$new(
                 options=options,
@@ -266,8 +267,7 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 visible="(secTables)",
                 clearWith=list(
                     "run",
-                    "file",
-                    "lang")))
+                    "file")))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="warnings",
@@ -276,8 +276,8 @@ reportOmvResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "run",
                     "file",
-                    "lang",
                     "useLLM",
+                    "backend",
                     "model",
                     "endpoint")))}))
 
@@ -304,20 +304,20 @@ reportOmvBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
 #' Report Writer (from saved file)
 #'
-#' Reads every analysis stored in a saved jamovi file (.omv), recomputes the 
-#' results and writes APA-style Method and Results text. Numbers always come 
-#' from the computed results. An optional local language model (Ollama) only 
-#' rewords the text; the output is verified against the computed numbers.
-#' 
+#' Reads every analysis stored in a saved jamovi file (.omv), recomputes the
+#' results and writes English APA-style Method and Results text. Numbers
+#' always come from the computed results. An optional local or user-configured
+#' language model may interpret or reword the text; output is checked against
+#' the computed values.
+#'
 #'
 #' @examples
-#' reportOmv(file = "", lang = "tr", run = TRUE)
+#' reportOmv(file = "", run = TRUE)
 #'
 #' @param run tick to (re)generate the report; keeps jamovi responsive while
 #'   setting options
 #' @param file path to a saved jamovi file; empty means auto-detect the newest
 #'   .omv in Documents/Desktop/Downloads
-#' @param lang .
 #' @param secMethod .
 #' @param secResults .
 #' @param secInterp .
@@ -325,6 +325,7 @@ reportOmvBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param secTables .
 #' @param alpha .
 #' @param useLLM .
+#' @param backend .
 #' @param polish .
 #' @param model .
 #' @param endpoint .
@@ -350,17 +351,17 @@ reportOmvBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 reportOmv <- function(
     run = FALSE,
     file = "",
-    lang = "tr",
     secMethod = TRUE,
     secResults = TRUE,
     secInterp = TRUE,
     secList = TRUE,
     secTables = FALSE,
     alpha = 0.05,
-    useLLM = TRUE,
+    useLLM = FALSE,
+    backend = "auto",
     polish = FALSE,
     model = "qwen3.5:4b",
-    endpoint = "http://localhost:11434",
+    endpoint = "",
     llmTimeout = 600) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -370,7 +371,6 @@ reportOmv <- function(
     options <- reportOmvOptions$new(
         run = run,
         file = file,
-        lang = lang,
         secMethod = secMethod,
         secResults = secResults,
         secInterp = secInterp,
@@ -378,6 +378,7 @@ reportOmv <- function(
         secTables = secTables,
         alpha = alpha,
         useLLM = useLLM,
+        backend = backend,
         polish = polish,
         model = model,
         endpoint = endpoint,

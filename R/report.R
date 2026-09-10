@@ -1,22 +1,33 @@
 # ---- End-to-end: .omv -> summaries -> text -----------------------------------
 
 #' Build the full report from a saved jamovi file
+#' @param file Path to a saved .omv file; NULL enables automatic discovery.
+#' @param lang Retained for compatibility; output is always English.
+#' @param useLLM Whether to use an AI backend.
+#' @param backend One of auto, ollama, builtin, or openai.
+#' @param model Model identifier for Ollama or a custom server.
+#' @param endpoint Optional Ollama or OpenAI-compatible server URL.
+#' @param sections Report sections to generate.
+#' @param alpha Statistical significance threshold.
+#' @param checkpoint Optional callback used to keep jamovi responsive.
+#' @param llm_timeout AI request timeout in seconds.
+#' @param polish Whether AI may rewrite Results wording.
 #' @export
-report_from_omv <- function(file = NULL, lang = "tr", useLLM = TRUE, model = "qwen3.5:4b", endpoint = default_endpoint(),
+report_from_omv <- function(file = NULL, lang = "en", useLLM = FALSE, backend = "auto", model = "qwen3.5:4b", endpoint = "",
                             sections = c("method", "results", "interpret"), alpha = 0.05, checkpoint = NULL, llm_timeout = 600, polish = FALSE) {
-  t0 <- Sys.time(); L <- i18n(lang); warnings_ <- character()
+  t0 <- Sys.time(); lang <- "en"; L <- i18n(); warnings_ <- character()
   rp <- resolve_omv_path(file)
   if (is.na(rp$path)) return(list(ok = FALSE, error = if (!is.null(rp$error)) rp$error else L$no_file))
   omv <- tryCatch(read_omv_all(rp$path), error = function(e) e)
   if (inherits(omv, "error")) return(list(ok = FALSE, error = paste0("read_omv: ", conditionMessage(omv))))
   summaries <- list(); list_rows <- list()
-  if (length(omv$syntax) == 0) warnings_ <- c(warnings_, tx(lang, "Dosyada yeniden çalıştırılabilir analiz sözdizimi bulunamadı; kaydedilmiş tablolar kullanıldı.", "No re-runnable analysis syntax found in the file; stored tables were used."))
+  if (length(omv$syntax) == 0) warnings_ <- c(warnings_, tx(lang, "Dosyada yeniden \u00E7al\u0131\u015Ft\u0131r\u0131labilir analiz s\u00F6zdizimi bulunamad\u0131; kaydedilmi\u015F tablolar kullan\u0131ld\u0131.", "No re-runnable analysis syntax found in the file; stored tables were used."))
   for (i in seq_along(omv$syntax)) {
     if (is.function(checkpoint)) checkpoint()
     rr <- run_syntax(omv$syntax[i], omv$data)
     if (isTRUE(rr$ok)) {
       s <- summarize_results(rr$res); s$syntax <- omv$syntax[i]
-      if (!isTRUE(s$supported)) warnings_ <- c(warnings_, paste0(i, ". ", s$title, ": ", L$unsupported, if (!is.null(s$error)) paste0(" — ", s$error) else ""))
+      if (!isTRUE(s$supported)) warnings_ <- c(warnings_, paste0(i, ". ", s$title, ": ", L$unsupported, if (!is.null(s$error)) paste0(" \u2014 ", s$error) else ""))
     } else {
       fn <- if (!is.null(rr$parsed) && !is.na(rr$parsed$ns)) rr$parsed$fn else "Rj"
       s <- list(type = fn, title = if (fn == "Rj") "R (Rj)" else fn, supported = FALSE, tables = list(), syntax = omv$syntax[i], opts = list())
@@ -45,17 +56,18 @@ report_from_omv <- function(file = NULL, lang = "tr", useLLM = TRUE, model = "qw
   supported <- Filter(function(s) isTRUE(s$supported), summaries)
   method_html <- render_method_text(supported, lang, alpha = alpha, jamovi_version = jamovi_version_guess())
   llm_note <- NULL; llm_used <- FALSE; interp_html <- NULL; stats <- NULL
+  connection <- NULL
   if (isTRUE(useLLM) && ("results" %in% sections || "interpret" %in% sections)) {
-    av <- ollama_available(endpoint)
-    if (!isTRUE(av$ok)) { llm_note <- sprintf(L$llm_unavailable, av$error) }
-    else if (!model_installed(model, av$models)) llm_note <- tx(lang, paste0("Model '", model, "' Ollama'da yüklü değil (yüklü: ", paste(av$models, collapse = ", "), "); şablon metni gösteriliyor."), paste0("Model '", model, "' is not installed in Ollama (installed: ", paste(av$models, collapse = ", "), "); showing template text."))
-    else {
+    connection <- llm_resolve_backend(backend, model, endpoint)
+    if (!isTRUE(connection$ok)) {
+      llm_note <- sprintf(L$llm_unavailable, connection$error)
+    } else {
       pieces <- character(); interps <- character()
       for (i in seq_along(summaries)) {
         piece <- render_results_text(summaries[[i]], lang, index = i)
         if (!isTRUE(summaries[[i]]$supported)) { pieces <- c(pieces, piece); next }
         if (is.function(checkpoint)) checkpoint()
-        r <- llm_report(piece, lang, model, endpoint, interpret = "interpret" %in% sections, polish = polish, timeout = llm_timeout)
+        r <- llm_report(piece, connection, interpret = "interpret" %in% sections, polish = polish, timeout = llm_timeout)
         stats <- stats_add(stats, r$stats)
         if (r$used) { pieces <- c(pieces, r$html); llm_used <- TRUE } else pieces <- c(pieces, piece)
         if (!is.null(r$interp)) interps <- c(interps, paste0("<p><b>", i, ". ", html_escape(summaries[[i]]$title), "</b></p>", r$interp))
@@ -67,9 +79,10 @@ report_from_omv <- function(file = NULL, lang = "tr", useLLM = TRUE, model = "qw
   }
   elapsed <- round(as.numeric(difftime(Sys.time(), t0, units = "secs")), 1)
   list_df <- analysis_list_df(summaries, lang)
-  info <- paste0("<p><b>", L$file_used, ":</b> ", html_escape(rp$path), if (isTRUE(rp$auto)) tx(lang, " (otomatik bulundu)", " (auto-detected)") else "", "<br><b>", L$n_analyses, ":</b> ", length(summaries), "<br>", if (llm_used) sprintf(L$layer_llm, html_escape(model)) else if (!is.null(interp_html)) sprintf(L$layer_interp, html_escape(model)) else L$layer_template, "<br><b>", L$elapsed, ":</b> ", elapsed, " ", L$sec, if (!is.null(stats)) paste0("<br>", stats_line(stats, model, lang)) else "", "</p>")
+  provider <- if (!is.null(connection) && isTRUE(connection$ok)) connection$label else "local AI"
+  info <- paste0("<p><b>", L$file_used, ":</b> ", html_escape(rp$path), if (isTRUE(rp$auto)) " (auto-detected)" else "", "<br><b>", L$n_analyses, ":</b> ", length(summaries), "<br>", if (llm_used) sprintf(L$layer_llm, html_escape(provider)) else if (!is.null(interp_html)) sprintf(L$layer_interp, html_escape(provider)) else L$layer_template, "<br><b>", L$elapsed, ":</b> ", elapsed, " ", L$sec, if (!is.null(stats)) paste0("<br>", stats_line(stats)) else "", "</p>")
   list(ok = TRUE, path = rp$path, summaries = summaries, method = method_html, results = results_html, interp = interp_html, info = info, list_df = list_df,
-       warnings = c(warnings_, llm_note), llm_used = llm_used, elapsed = elapsed, stats = stats)
+       warnings = c(warnings_, llm_note), llm_used = llm_used, elapsed = elapsed, stats = stats, provider = provider)
 }
 
 analysis_list_df <- function(summaries, lang) {
@@ -106,18 +119,18 @@ primary_stat <- function(s) {
     ttestPS = { r <- s$rows[[1]]; te <- if (!is.null(r$student)) r$student else NULL; if (!is.null(te)) g(paste0("t(", fmt_df(te$df), ") = ", fmt_num(te$t)), te$p, if (!is.na(te$es)) paste0("d = ", fmt_num(te$es)) else "") else g(paste0("W = ", fmt_num(r$wilcoxon$W, 1)), r$wilcoxon$p, "") },
     ttestOneS = { r <- s$rows[[1]]; te <- r$student; g(paste0("t(", fmt_df(te$df), ") = ", fmt_num(te$t)), te$p, if (!is.na(te$es)) paste0("d = ", fmt_num(te$es)) else "") },
     anovaOneW = { r <- s$rows[[1]]; te <- if (!is.null(r$fisher)) r$fisher else r$welch; g(paste0("F(", fmt_df(te$df1), ", ", fmt_df(te$df2), ") = ", fmt_num(te$F)), te$p, "") },
-    ANOVA = , ancova = { t <- s$terms[[1]]; g(paste0("F(", fmt_df(t$df), ", ", fmt_df(s$resid_df), ") = ", fmt_num(t$F)), t$p, if (!is.na(t$etaSqP)) paste0("η²p = ", fmt_bounded(t$etaSqP)) else "") },
-    anovaRM = { w <- s$within[[1]]; g(paste0("F(", fmt_df(w$df), ") = ", fmt_num(w$F)), w$p, if (!is.na(w$partEta)) paste0("η²p = ", fmt_bounded(w$partEta)) else "") },
-    anovaNP = { r <- s$rows[[1]]; g(paste0("H(", fmt_df(r$df), ") = ", fmt_num(r$H)), r$p, if (!is.na(r$es)) paste0("ε² = ", fmt_bounded(r$es)) else "") },
-    anovaRMNP = g(paste0("χ²(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, ""),
+    ANOVA = , ancova = { t <- s$terms[[1]]; g(paste0("F(", fmt_df(t$df), ", ", fmt_df(s$resid_df), ") = ", fmt_num(t$F)), t$p, if (!is.na(t$etaSqP)) paste0("\u03B7\u00B2p = ", fmt_bounded(t$etaSqP)) else "") },
+    anovaRM = { w <- s$within[[1]]; g(paste0("F(", fmt_df(w$df), ") = ", fmt_num(w$F)), w$p, if (!is.na(w$partEta)) paste0("\u03B7\u00B2p = ", fmt_bounded(w$partEta)) else "") },
+    anovaNP = { r <- s$rows[[1]]; g(paste0("H(", fmt_df(r$df), ") = ", fmt_num(r$H)), r$p, if (!is.na(r$es)) paste0("\u03B5\u00B2 = ", fmt_bounded(r$es)) else "") },
+    anovaRMNP = g(paste0("\u03C7\u00B2(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, ""),
     corrMatrix = { p <- s$pairs[[1]]; g(paste0("r = ", fmt_bounded(p$r)), p$rp, "") },
-    linReg = { m <- s$models[[length(s$models)]]; g(paste0("F(", fmt_df(m$df1), ", ", fmt_df(m$df2), ") = ", fmt_num(m$F)), m$p, paste0("R² = ", fmt_bounded(m$r2))) },
-    logRegBin = , logRegOrd = , logRegMulti = { m <- s$models[[length(s$models)]]; g(paste0("χ²(", fmt_df(m$df), ") = ", fmt_num(m$chi)), m$p, if (!is.na(m$r2n)) paste0("R²N = ", fmt_bounded(m$r2n)) else if (!is.na(m$r2mf)) paste0("R²MF = ", fmt_bounded(m$r2mf)) else "") },
-    contTables = { t <- s$tests[[1]]; g(paste0("χ²(", fmt_df(t$df), ") = ", fmt_num(t$chi)), t$p, if (!is.na(t$cramer)) paste0("V = ", fmt_bounded(t$cramer)) else "") },
-    contTablesPaired = g(paste0("χ²(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, ""),
-    propTestN = g(paste0("χ²(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, ""),
-    reliability = g(paste0("α = ", fmt_bounded(s$alpha)), NA_real_, if (!is.na(s$omega)) paste0("ω = ", fmt_bounded(s$omega)) else ""),
+    linReg = { m <- s$models[[length(s$models)]]; g(paste0("F(", fmt_df(m$df1), ", ", fmt_df(m$df2), ") = ", fmt_num(m$F)), m$p, paste0("R\u00B2 = ", fmt_bounded(m$r2))) },
+    logRegBin = , logRegOrd = , logRegMulti = { m <- s$models[[length(s$models)]]; g(paste0("\u03C7\u00B2(", fmt_df(m$df), ") = ", fmt_num(m$chi)), m$p, if (!is.na(m$r2n)) paste0("R\u00B2N = ", fmt_bounded(m$r2n)) else if (!is.na(m$r2mf)) paste0("R\u00B2MF = ", fmt_bounded(m$r2mf)) else "") },
+    contTables = { t <- s$tests[[1]]; g(paste0("\u03C7\u00B2(", fmt_df(t$df), ") = ", fmt_num(t$chi)), t$p, if (!is.na(t$cramer)) paste0("V = ", fmt_bounded(t$cramer)) else "") },
+    contTablesPaired = g(paste0("\u03C7\u00B2(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, ""),
+    propTestN = g(paste0("\u03C7\u00B2(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, ""),
+    reliability = g(paste0("\u03B1 = ", fmt_bounded(s$alpha)), NA_real_, if (!is.na(s$omega)) paste0("\u03C9 = ", fmt_bounded(s$omega)) else ""),
     efa = , pca = g(paste0("KMO = ", fmt_bounded(s$kmo)), if (!is.null(s$bartlett)) s$bartlett$p else NA_real_, ""),
-    cfa = g(paste0("χ²(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, paste0("CFI = ", fmt_bounded(s$cfi, 3))),
+    cfa = g(paste0("\u03C7\u00B2(", fmt_df(s$df), ") = ", fmt_num(s$chi)), s$p, paste0("CFI = ", fmt_bounded(s$cfi, 3))),
     g("", NA_real_, "")), error = function(e) g("", NA_real_, ""))
 }

@@ -11,12 +11,12 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             spearman = FALSE,
             kendall = FALSE,
             ci = FALSE,
-            lang = "tr",
-            useLLM = TRUE,
+            useLLM = FALSE,
+            backend = "auto",
             interp = TRUE,
             polish = FALSE,
             model = "qwen3.5:4b",
-            endpoint = "http://localhost:11434", ...) {
+            endpoint = "", ...) {
 
             super$initialize(
                 package="jmvReport",
@@ -48,17 +48,19 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "ci",
                 ci,
                 default=FALSE)
-            private$..lang <- jmvcore::OptionList$new(
-                "lang",
-                lang,
-                options=list(
-                    "tr",
-                    "en"),
-                default="tr")
             private$..useLLM <- jmvcore::OptionBool$new(
                 "useLLM",
                 useLLM,
-                default=TRUE)
+                default=FALSE)
+            private$..backend <- jmvcore::OptionList$new(
+                "backend",
+                backend,
+                options=list(
+                    "auto",
+                    "ollama",
+                    "builtin",
+                    "openai"),
+                default="auto")
             private$..interp <- jmvcore::OptionBool$new(
                 "interp",
                 interp,
@@ -74,15 +76,15 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..endpoint <- jmvcore::OptionString$new(
                 "endpoint",
                 endpoint,
-                default="http://localhost:11434")
+                default="")
 
             self$.addOption(private$..vars)
             self$.addOption(private$..pearson)
             self$.addOption(private$..spearman)
             self$.addOption(private$..kendall)
             self$.addOption(private$..ci)
-            self$.addOption(private$..lang)
             self$.addOption(private$..useLLM)
+            self$.addOption(private$..backend)
             self$.addOption(private$..interp)
             self$.addOption(private$..polish)
             self$.addOption(private$..model)
@@ -94,8 +96,8 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         spearman = function() private$..spearman$value,
         kendall = function() private$..kendall$value,
         ci = function() private$..ci$value,
-        lang = function() private$..lang$value,
         useLLM = function() private$..useLLM$value,
+        backend = function() private$..backend$value,
         interp = function() private$..interp$value,
         polish = function() private$..polish$value,
         model = function() private$..model$value,
@@ -106,8 +108,8 @@ aiCorrOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..spearman = NA,
         ..kendall = NA,
         ..ci = NA,
-        ..lang = NA,
         ..useLLM = NA,
+        ..backend = NA,
         ..interp = NA,
         ..polish = NA,
         ..model = NA,
@@ -204,8 +206,8 @@ aiCorrResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 title="Report text",
                 visible=TRUE,
                 clearWith=list(
-                    "lang",
                     "useLLM",
+                    "backend",
                     "interp",
                     "polish",
                     "model",
@@ -216,8 +218,8 @@ aiCorrResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 title="Warnings",
                 visible=FALSE,
                 clearWith=list(
-                    "lang",
                     "useLLM",
+                    "backend",
                     "interp",
                     "polish",
                     "model",
@@ -254,8 +256,8 @@ aiCorrBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param spearman .
 #' @param kendall .
 #' @param ci .
-#' @param lang .
 #' @param useLLM .
+#' @param backend .
 #' @param interp .
 #' @param polish .
 #' @param model .
@@ -281,12 +283,12 @@ aiCorr <- function(
     spearman = FALSE,
     kendall = FALSE,
     ci = FALSE,
-    lang = "tr",
-    useLLM = TRUE,
+    useLLM = FALSE,
+    backend = "auto",
     interp = TRUE,
     polish = FALSE,
     model = "qwen3.5:4b",
-    endpoint = "http://localhost:11434") {
+    endpoint = "") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("aiCorr requires jmvcore to be installed (restart may be required)")
@@ -304,8 +306,8 @@ aiCorr <- function(
         spearman = spearman,
         kendall = kendall,
         ci = ci,
-        lang = lang,
         useLLM = useLLM,
+        backend = backend,
         interp = interp,
         polish = polish,
         model = model,

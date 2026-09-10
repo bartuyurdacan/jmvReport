@@ -3,3 +3,14 @@
 ^build$
 ^.*\.jmo$
 ^tests/fixtures$
+^tests/out$
+^tests/debug_omv[.]R$
+^tests/debug_report[.]R$
+^tests/run_local[.]R$
+^tests/test_installed[.]R$
+^tests/test_installed_report[.]R$
+^tests/test_iris_llm[.]R$
+^tests/testthat/_problems$
+^tests/testthat/testthat-problems[.]rds$
+^finetune$
+^R/interpret_rules[.]R$

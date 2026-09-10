@@ -1,3 +1,4 @@
+---
 title: Report Writer (from saved file)
 name: reportOmv
 jus: '3.0'
@@ -16,8 +17,6 @@ children:
       - type: LayoutBox
         style: inline
         children:
-          - type: ComboBox
-            name: lang
           - type: TextBox
             name: alpha
             format: number
@@ -39,12 +38,15 @@ children:
       - type: CheckBox
         name: secTables
   - type: CollapseBox
-    label: Local AI (Ollama)
+    label: AI provider
     collapsed: false
     margin: large
     children:
       - type: CheckBox
         name: useLLM
+      - type: ComboBox
+        name: backend
+        enable: (useLLM)
       - type: CheckBox
         name: polish
         enable: (useLLM)
@@ -62,3 +64,4 @@ children:
         name: llmTimeout
         format: number
         enable: (useLLM)
+...

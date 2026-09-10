@@ -8,13 +8,14 @@ jas: '1.2'
 description:
     main: >
         Reads every analysis stored in a saved jamovi file (.omv), recomputes the
-        results and writes APA-style Method and Results text. Numbers always come
-        from the computed results. An optional local language model (Ollama) only
-        rewords the text; the output is verified against the computed numbers.
+        results and writes English APA-style Method and Results text. Numbers
+        always come from the computed results. An optional local or
+        user-configured language model may interpret or reword the text; output
+        is checked against the computed values.
     R:
         dontrun: false
         usage: |
-            reportOmv(file = "", lang = "tr", run = TRUE)
+            reportOmv(file = "", run = TRUE)
 
 options:
     - name: run
@@ -30,16 +31,6 @@ options:
       default: ''
       description:
           R: path to a saved jamovi file; empty means auto-detect the newest .omv in Documents/Desktop/Downloads
-
-    - name: lang
-      title: Language
-      type: List
-      options:
-        - name: tr
-          title: Türkçe
-        - name: en
-          title: English
-      default: tr
 
     - name: secMethod
       title: Method (Statistical Analysis)
@@ -74,9 +65,23 @@ options:
       default: 0.05
 
     - name: useLLM
-      title: Polish wording with a local AI model (Ollama)
+      title: Use AI interpretation and optional wording polish
       type: Bool
-      default: true
+      default: false
+
+    - name: backend
+      title: AI backend
+      type: List
+      options:
+        - name: auto
+          title: Auto (Ollama, then built-in)
+        - name: ollama
+          title: Ollama
+        - name: builtin
+          title: Built-in llama.cpp
+        - name: openai
+          title: OpenAI-compatible server
+      default: auto
 
     - name: polish
       title: Also rewrite the Results wording with AI (slower)
@@ -84,14 +89,14 @@ options:
       default: false
 
     - name: model
-      title: Ollama model
+      title: Model (Ollama or custom server)
       type: String
       default: 'qwen3.5:4b'
 
     - name: endpoint
-      title: Ollama server
+      title: Custom server URL (optional)
       type: String
-      default: 'http://localhost:11434'
+      default: ''
 
     - name: llmTimeout
       title: AI time limit per section (seconds)

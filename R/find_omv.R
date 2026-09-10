@@ -2,8 +2,8 @@
 
 candidate_dirs <- function() {
   home <- path.expand("~")
-  dirs <- c(file.path(home, c("Documents", "Desktop", "Downloads", "Belgeler", "Masaüstü", "İndirilenler")),
-            file.path(home, "OneDrive", c("Documents", "Desktop", "Belgeler", "Masaüstü")),
+  dirs <- c(file.path(home, c("Documents", "Desktop", "Downloads", "Belgeler", "Masa\u00FCst\u00FC", "\u0130ndirilenler")),
+            file.path(home, "OneDrive", c("Documents", "Desktop", "Belgeler", "Masa\u00FCst\u00FC")),
             Sys.getenv("USERPROFILE", unset = ""), getwd())
   # xdg user dirs (Linux)
   xdg <- file.path(home, ".config", "user-dirs.dirs")
